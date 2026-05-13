@@ -1,0 +1,19 @@
+{
+  "name": "cuscus-hats-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc11",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pino": "^10.3.1",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.3",
+    "twilio": "^5.3.3"
+  }
+}

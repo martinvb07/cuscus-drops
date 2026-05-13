@@ -118,8 +118,10 @@ export default function AdminPage() {
   const [progress, setProgress]           = useState<CampaignProgress | null>(null);
 
   // Registrations
-  const [search, setSearch]     = useState('');
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const [search, setSearch]         = useState('');
+  const [deleting, setDeleting]     = useState<string | null>(null);
+  const [clearConfirm, setClearConfirm] = useState(false);
+  const [clearing, setClearing]     = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem('cuscus_admin') === '1') setAuthed(true);
@@ -262,6 +264,15 @@ export default function AdminPage() {
     } finally { setDeleting(null); }
   }
 
+  async function clearAllRegs() {
+    setClearing(true);
+    try {
+      await fetch(`${API_URL}/api/registrations`, { method: 'DELETE', headers: ADMIN_HDRS });
+      setRegs([]);
+      setClearConfirm(false);
+    } finally { setClearing(false); }
+  }
+
   const filteredRegs = [...regs].reverse().filter(r => r.phone.includes(search));
 
   if (!authed) return <Login onAuth={handleAuth} />;
@@ -355,8 +366,52 @@ export default function AdminPage() {
                     </svg>
                     CSV
                   </button>
+                  {regs.length > 0 && (
+                    <button onClick={() => setClearConfirm(true)}
+                      className="font-mono text-[9px] tracking-[0.3em] uppercase text-red-400/50 hover:text-red-400/90 border border-[var(--line)] hover:border-red-400/40 h-[40px] px-4 transition-all duration-200 flex items-center gap-2"
+                      style={{ background: 'rgba(235,230,219,0.04)' }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/>
+                      </svg>
+                      Borrar todo
+                    </button>
+                  )}
                 </div>
               </div>
+
+              {clearConfirm && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+                  style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)' }}
+                  onClick={() => setClearConfirm(false)}>
+                  <div className="w-full max-w-[380px] border border-[var(--line-strong)] bg-[#0c0c0c]"
+                    onClick={e => e.stopPropagation()}>
+                    <div className="border-b border-[var(--line)] px-6 py-4 flex items-center justify-between">
+                      <span className="font-mono text-[10px] tracking-[0.42em] text-bone uppercase">Confirmar</span>
+                      <button onClick={() => setClearConfirm(false)} className="w-7 h-7 border border-[var(--line)] grid place-items-center text-bone-3 hover:text-bone hover:border-[var(--line-strong)] transition-colors">
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg>
+                      </button>
+                    </div>
+                    <div className="px-6 py-7 flex flex-col gap-6">
+                      <div className="flex flex-col gap-2">
+                        <p className="font-gothic text-[20px] tracking-[0.1em] uppercase text-bone leading-none">¿Borrar todo?</p>
+                        <p className="font-mono text-[9px] tracking-[0.14em] text-bone-3 leading-[1.9] uppercase">
+                          Se eliminarán los {regs.length} registros permanentemente.<br />Esta acción no se puede deshacer.
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setClearConfirm(false)}
+                          className="flex-1 h-[44px] font-mono text-[9px] tracking-[0.28em] uppercase border border-[var(--line)] hover:border-[var(--line-strong)] text-bone-3 hover:text-bone transition-all">
+                          Cancelar
+                        </button>
+                        <button onClick={clearAllRegs} disabled={clearing}
+                          className="flex-1 h-[44px] font-mono text-[9px] tracking-[0.28em] uppercase bg-red-400/80 hover:bg-red-400 text-[#0a0a0a] border border-red-400/80 transition-all disabled:opacity-40">
+                          {clearing ? 'Borrando...' : 'Eliminar todo'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {filteredRegs.length === 0 ? (
                 <div className="flex flex-col items-center gap-4 py-20">

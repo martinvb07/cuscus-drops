@@ -25,6 +25,12 @@ router.get('/', requireAdmin, async (_req, res) => {
   res.json({ count: registrations.length, registrations });
 });
 
+// DELETE /api/registrations  — admin only — delete all
+router.delete('/', requireAdmin, async (_req, res) => {
+  const result = await Registration.deleteMany({});
+  res.json({ message: `${result.deletedCount} registros eliminados` });
+});
+
 // DELETE /api/registrations/:id  — admin only
 router.delete('/:id', requireAdmin, async (req, res) => {
   const deleted = await Registration.findByIdAndDelete(req.params.id);

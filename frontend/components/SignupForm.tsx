@@ -35,8 +35,51 @@ const LABELS: Record<Status, string> = {
   loading:   'Enviando...',
   success:   'En la lista ✓',
   error:     'Error, reintenta',
-  duplicate: 'Ya estás registrado ✓',
+  duplicate: 'En la lista ✓',
 };
+
+function DuplicateModal({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', h);
+    document.body.style.overflow = 'hidden';
+    return () => { document.removeEventListener('keydown', h); document.body.style.overflow = ''; };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4"
+      style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(6px)' }}
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-[400px] border border-[var(--line-strong)] bg-[#0c0c0c]"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="sticky top-0 bg-[#0c0c0c] border-b border-[var(--line)] px-6 py-4 flex items-center justify-between">
+          <span className="font-mono text-[10px] tracking-[0.42em] text-bone uppercase">Ya registrado</span>
+          <button onClick={onClose} className="w-7 h-7 border border-[var(--line)] grid place-items-center text-bone-3 hover:text-bone hover:border-[var(--line-strong)] transition-colors">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 1l10 10M11 1L1 11"/></svg>
+          </button>
+        </div>
+        <div className="px-6 py-8 flex flex-col items-center gap-6 text-center">
+          <div className="w-[42px] h-[42px] border border-[rgba(74,222,128,0.3)] grid place-items-center" style={{ background: 'rgba(74,222,128,0.06)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="1.8"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div className="flex flex-col gap-2">
+            <p className="font-gothic text-[22px] tracking-[0.1em] uppercase text-bone leading-none">Ya estás en la lista</p>
+            <p className="font-mono text-[9px] tracking-[0.18em] text-bone-3 leading-[1.9] uppercase">
+              Este número ya fue registrado.<br />Te avisaremos cuando el drop esté disponible.
+            </p>
+          </div>
+          <button onClick={onClose} className="h-[42px] w-full bg-bone text-ink font-mono text-[10px] tracking-[0.36em] uppercase hover:bg-transparent hover:text-bone border border-bone transition-all duration-200">
+            Entendido
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function PrivacyModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
@@ -92,10 +135,12 @@ export default function SignupForm() {
   const [country, setCountry]         = useState(COUNTRIES[0]);
   const [open, setOpen]               = useState(false);
   const [query, setQuery]             = useState('');
-  const [showPrivacy, setShowPrivacy] = useState(false);
-  const wrapperRef                    = useRef<HTMLDivElement>(null);
-  const searchRef                     = useRef<HTMLInputElement>(null);
-  const closePrivacy = useCallback(() => setShowPrivacy(false), []);
+  const [showPrivacy, setShowPrivacy]     = useState(false);
+  const [showDuplicate, setShowDuplicate] = useState(false);
+  const wrapperRef                        = useRef<HTMLDivElement>(null);
+  const searchRef                         = useRef<HTMLInputElement>(null);
+  const closePrivacy   = useCallback(() => setShowPrivacy(false), []);
+  const closeDuplicate = useCallback(() => setShowDuplicate(false), []);
 
   const filtered = query.trim()
     ? COUNTRIES.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || c.dial.includes(query))
@@ -125,7 +170,7 @@ export default function SignupForm() {
         body: JSON.stringify(data),
       });
       if (res.status === 201)      setStatus('success');
-      else if (res.status === 409) setStatus('duplicate');
+      else if (res.status === 409) { setStatus('duplicate'); setShowDuplicate(true); }
       else                         setStatus('error');
     } catch { setStatus('error'); }
     setTimeout(() => setStatus('idle'), 2400);
@@ -135,7 +180,8 @@ export default function SignupForm() {
 
   return (
     <>
-      {showPrivacy && <PrivacyModal onClose={closePrivacy} />}
+      {showPrivacy   && <PrivacyModal   onClose={closePrivacy} />}
+      {showDuplicate && <DuplicateModal onClose={closeDuplicate} />}
       <form onSubmit={handleSubmit} className="w-full max-w-[480px] flex flex-col gap-[6px] sm:gap-[8px]" autoComplete="off">
 
         {/* Header */}

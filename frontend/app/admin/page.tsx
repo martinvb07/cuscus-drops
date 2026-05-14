@@ -79,7 +79,8 @@ function Login({ onAuth }: { onAuth: () => void }) {
           <div className="flex border border-[var(--line)] focus-within:border-[var(--line-strong)] transition-colors" style={{ background: 'rgba(235,230,219,0.04)' }}>
             <input type={show ? 'text' : 'password'} value={pwd} onChange={e => setPwd(e.target.value)}
               placeholder="Contraseña" autoFocus
-              className="flex-1 bg-transparent outline-none text-bone px-5 h-[50px] font-mono text-[12px] tracking-[0.16em] placeholder:text-bone-3" />
+              className="flex-1 bg-transparent outline-none text-bone px-5 h-[50px] font-mono tracking-[0.16em] placeholder:text-bone-3"
+              style={{ fontSize: '16px' }} />
             <button type="button" onClick={() => setShow(v => !v)} className="px-4 text-bone-3 hover:text-bone transition-colors">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                 {show
@@ -371,7 +372,8 @@ export default function AdminPage() {
                     </svg>
                     <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                       placeholder="Buscar número..."
-                      className="bg-transparent outline-none text-bone font-mono text-[10px] tracking-[0.1em] placeholder:text-bone-3 w-[130px]" />
+                      className="bg-transparent outline-none text-bone font-mono tracking-[0.1em] placeholder:text-bone-3 w-[130px]"
+                      style={{ fontSize: '16px' }} />
                   </div>
                   <button onClick={() => exportCSV(regs)}
                     className="font-mono text-[9px] tracking-[0.3em] uppercase text-bone-3 hover:text-bone border border-[var(--line)] hover:border-[var(--line-strong)] h-[40px] px-4 transition-all duration-200 flex items-center gap-2"
@@ -524,11 +526,11 @@ export default function AdminPage() {
                 </h2>
                 <div className="flex gap-2">
                   <input type="date" value={dateVal} onChange={e => setDateVal(e.target.value)}
-                    className="flex-1 border border-[var(--line)] focus:border-[var(--line-strong)] text-bone px-5 h-[50px] font-mono text-[12px] outline-none transition-colors [color-scheme:dark]"
-                    style={{ background: 'rgba(235,230,219,0.05)' }} />
+                    className="flex-1 border border-[var(--line)] focus:border-[var(--line-strong)] text-bone px-5 h-[50px] font-mono outline-none transition-colors [color-scheme:dark]"
+                    style={{ background: 'rgba(235,230,219,0.05)', fontSize: '16px' }} />
                   <input type="time" value={timeVal} onChange={e => setTimeVal(e.target.value)}
-                    className="w-[120px] border border-[var(--line)] focus:border-[var(--line-strong)] text-bone px-5 h-[50px] font-mono text-[12px] outline-none transition-colors [color-scheme:dark]"
-                    style={{ background: 'rgba(235,230,219,0.05)' }} />
+                    className="w-[120px] border border-[var(--line)] focus:border-[var(--line-strong)] text-bone px-5 h-[50px] font-mono outline-none transition-colors [color-scheme:dark]"
+                    style={{ background: 'rgba(235,230,219,0.05)', fontSize: '16px' }} />
                   <button onClick={saveCountdown} disabled={savingDate || !isDirty || !currentDatetime}
                     className="h-[50px] px-6 font-mono text-[10px] tracking-[0.36em] uppercase border transition-all duration-200 disabled:opacity-30 shrink-0"
                     style={
@@ -637,8 +639,8 @@ export default function AdminPage() {
                     onChange={e => { setMessage(e.target.value); setSendResult(null); setSendConfirm(false); }}
                     placeholder={"Hola, el drop de Cuscus Hats ya está disponible.\n\nEntra ahora antes de que se agoten:\nhttps://cuscushats.com"}
                     rows={5}
-                    className="border border-[var(--line)] focus:border-[var(--line-strong)] text-bone px-5 py-4 font-mono text-[11px] tracking-[0.08em] leading-relaxed outline-none transition-colors resize-none placeholder:text-bone-3"
-                    style={{ background: 'rgba(235,230,219,0.03)' }} />
+                    className="border border-[var(--line)] focus:border-[var(--line-strong)] text-bone px-5 py-4 font-mono tracking-[0.08em] leading-relaxed outline-none transition-colors resize-none placeholder:text-bone-3"
+                    style={{ background: 'rgba(235,230,219,0.03)', fontSize: '16px' }} />
 
                   {/* Progreso realtime */}
                   {sending && progress && !progress.done && (

@@ -2,10 +2,9 @@
 
 # Frontend — Cuscus Hats
 
-**Interfaz web de la plataforma de drops**
+**Todo lo que el usuario ve en la plataforma**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
@@ -15,28 +14,21 @@
 
 ## ¿Qué es esto?
 
-La carpeta `frontend` contiene todo lo que el usuario ve: la landing del drop, el formulario de registro, el contador regresivo, la pantalla de Sold Out y el panel de administración. Está construida con Next.js y React, con un diseño oscuro, tipografía gótica y animaciones inmersivas.
+Esta carpeta contiene la interfaz web completa de Cuscus Hats: la landing del drop, el formulario de registro, el contador regresivo, la pantalla de Sold Out y el panel de administración. Es lo que el usuario ve y con lo que interactúa directamente.
 
 ---
 
 ## Páginas
 
 ### `/` — Landing principal
-Lo que ve cualquier persona que entre a la página. Tiene tres estados posibles:
+La cara pública de la plataforma. Dependiendo del estado del drop, muestra una experiencia diferente:
 
-- **Pre-drop** — Se muestra el contador regresivo y el formulario para dejar el número de WhatsApp.
-- **Sold Out** — Cuando el admin activa este estado, la pantalla cambia automáticamente para todos sin necesidad de recargar.
-- **Live** — Estado cuando el drop está activo, muestra un botón de compra.
+- **Pre-drop** — El visitante ve el contador regresivo y puede dejar su número de WhatsApp para recibir la alerta del lanzamiento.
+- **Sold Out** — En cuanto el admin activa este estado, la pantalla cambia sola para todos los visitantes conectados, mostrando que el drop ya terminó.
+- **Live** — Cuando el drop está disponible, aparece el botón para comprar.
 
 ### `/admin` — Panel de administración
-Acceso protegido con contraseña. Desde aquí el equipo de Cuscus puede:
-- Ver en tiempo real quién se está registrando (con notificación instantánea)
-- Buscar registros por número
-- Exportar la lista a CSV
-- Eliminar registros individuales o todos
-- Cambiar la fecha del contador
-- Conectar WhatsApp y enviar mensajes masivos
-- Activar el modo Sold Out con un clic
+Solo accesible con contraseña. Desde aquí el equipo de Cuscus gestiona todo el drop: ve los registros en tiempo real, cambia la fecha del contador, conecta WhatsApp y activa el Sold Out.
 
 ---
 
@@ -44,57 +36,38 @@ Acceso protegido con contraseña. Desde aquí el equipo de Cuscus puede:
 
 | Componente | Qué hace |
 |---|---|
-| `LandingDrop` | Controla qué pantalla mostrar según el estado del drop |
-| `SignupForm` | Formulario de registro con selector de país y validación |
-| `Countdown` | Contador regresivo que se actualiza cada segundo |
-| `Starfield` | Campo de 160 estrellas animadas con parpadeo |
-| `ShootingStars` | Estrellas fugaces que cruzan la pantalla |
-| `Footer` | Pie de página con redes sociales |
+| `LandingDrop` | Decide qué pantalla mostrar según el estado actual del drop |
+| `SignupForm` | Formulario de registro con selector de país y validación del número |
+| `Countdown` | Contador de días, horas, minutos y segundos hasta el drop |
+| `Starfield` | Campo de 160 estrellas animadas con parpadeo aleatorio |
+| `ShootingStars` | Estrellas fugaces que cruzan la pantalla periódicamente |
+| `Footer` | Pie de página con los links a redes sociales |
 
 ---
 
-## Variables de entorno
+## Tipografías
 
-Crea un archivo `.env.local` en esta carpeta con:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:4000
-```
-
-En producción, cambia esa URL por la dirección real del servidor backend.
-
----
-
-## Tipografías usadas
-
-| Fuente | Uso |
+| Fuente | Dónde se usa |
 |---|---|
-| **Pirata One** | Títulos y nombres (`CUSCUS`, `SOLD OUT`, botones principales) |
-| **Cormorant Garamond** | Números del contador (elegancia clásica) |
-| **JetBrains Mono** | Textos secundarios, labels y campos de formulario |
+| **Pirata One** | Títulos, nombre de la marca y elementos principales |
+| **Cormorant Garamond** | Números del contador regresivo |
+| **JetBrains Mono** | Textos secundarios, etiquetas y campos del formulario |
 
 ---
 
-## Cómo correr el frontend
+## Imágenes y recursos
 
-```bash
-# Instalar dependencias
-npm install
-
-# Modo desarrollo (puerto 3000)
-npm run dev
-
-# Build de producción
-npm run build
-npm run start
-```
+| Archivo | Para qué sirve |
+|---|---|
+| `LOGO_FINAL.png` | Monograma del logo (aparece entre LIMITED y DROP) |
+| `NOMBRE_FINAL.png` | Wordmark "CUSCUS" en tipografía gótica |
+| `fondo.png` | Imagen de fondo del paisaje oscuro |
 
 ---
 
 ## Notas de diseño
 
-- El fondo (`fondo.png`) es la imagen principal del paisaje oscuro.
-- `LOGO_FINAL.png` es el monograma del logo que aparece en la landing.
-- `NOMBRE_FINAL.png` es el wordmark "CUSCUS" en tipografía gótica.
-- El efecto grain y la viñeta se aplican globalmente desde `globals.css`.
-- En móvil, los inputs tienen `font-size: 16px` para evitar el zoom automático de iOS Safari.
+- El efecto de grano de película y la viñeta oscura se aplican globalmente y le dan la estética cinematográfica característica.
+- En móvil, los campos de texto tienen un tamaño especial para evitar que iOS Safari haga zoom automático al tocarlos.
+- La fila **LIMITED · LOGO · DROP** usa un grid de tres columnas para garantizar que el logo quede siempre perfectamente centrado, sin importar el tamaño de pantalla.
+- Todos los cambios de estado (nuevo registro, sold out, WhatsApp) se reflejan en pantalla al instante gracias a la conexión en tiempo real con el servidor.

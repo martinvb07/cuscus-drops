@@ -2,7 +2,7 @@
 
 # Backend — Cuscus Hats
 
-**Servidor, base de datos y comunicaciones de la plataforma**
+**El servidor que mueve todo por detrás**
 
 [![Node.js](https://img.shields.io/badge/Node.js-22+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
@@ -15,141 +15,59 @@
 
 ## ¿Qué es esto?
 
-La carpeta `backend` contiene el servidor que maneja todo lo que ocurre detrás de la página: guardar registros, manejar el estado del drop, enviar mensajes por WhatsApp y comunicar cambios en tiempo real a todos los usuarios conectados.
-
-Corre en el **puerto 4000** y se conecta a una base de datos MongoDB.
+Esta carpeta contiene el servidor de la plataforma: recibe los registros, guarda los datos, controla el estado del drop y mantiene todo sincronizado en tiempo real entre el admin y los visitantes. También es quien gestiona la conexión con WhatsApp para el envío de mensajes masivos.
 
 ---
 
-## ¿Qué hace el servidor?
+## ¿Qué hace?
 
-### Registros de usuarios
-Guarda los números de WhatsApp de quienes se pre-registran. Verifica que no haya duplicados y avisa al panel de admin en tiempo real cada vez que llega uno nuevo.
+### Guarda los registros
+Cada vez que alguien deja su número en la landing, el servidor lo guarda en la base de datos. Verifica automáticamente que el número no esté ya registrado y, si es nuevo, avisa al panel de admin al instante.
 
-### Estado del drop
-Maneja si la plataforma está en modo *pre-drop*, *live* o *sold-out*. Cuando el admin cambia el estado, el servidor lo comunica instantáneamente a todos los navegadores conectados — la landing cambia sola.
+### Controla el estado del drop
+Mantiene el estado actual de la plataforma: si está en pre-drop, live o sold-out. Cuando el admin cambia el estado desde el panel, el servidor se lo comunica a todos los navegadores conectados en ese momento — la landing cambia sola, sin que nadie tenga que recargar la página.
 
-### Contador regresivo
-Guarda la fecha objetivo del drop. El admin puede cambiarla desde el panel sin tocar el código.
+### Maneja el contador regresivo
+Guarda la fecha objetivo del drop. El admin puede cambiarla desde el panel en cualquier momento y el contador se actualiza para todos los visitantes.
 
-### WhatsApp
-El servidor se puede conectar directamente a WhatsApp (escaneando un código QR, sin necesidad de APIs de pago). Una vez conectado, permite enviar mensajes masivos a todos los registrados desde el panel de admin.
+### Conecta con WhatsApp
+El servidor puede vincularse directamente a una cuenta de WhatsApp escaneando un código QR — sin necesidad de contratar ninguna API de pago. Una vez conectado, puede enviar un mensaje a todos los registrados con un solo clic desde el panel de admin.
 
-### Tiempo real
-Usa Socket.IO para mantener una conexión abierta entre el servidor y todos los navegadores. Así, cualquier cambio (nuevo registro, sold out, estado de WhatsApp) se refleja inmediatamente sin necesidad de recargar la página.
-
----
-
-## Endpoints de la API
-
-| Método | Ruta | Qué hace |
-|---|---|---|
-| `POST` | `/api/registrations` | Registra un número nuevo |
-| `GET` | `/api/registrations` | Lista todos los registros (solo admin) |
-| `DELETE` | `/api/registrations` | Elimina todos los registros (solo admin) |
-| `DELETE` | `/api/registrations/:id` | Elimina un registro específico (solo admin) |
-| `GET` | `/api/countdown` | Obtiene la fecha del próximo drop |
-| `PUT` | `/api/countdown` | Actualiza la fecha del drop (solo admin) |
-| `GET` | `/api/drop/state` | Obtiene el estado actual del drop |
-| `POST` | `/api/whatsapp/connect` | Inicia la conexión a WhatsApp |
-| `POST` | `/api/whatsapp/disconnect` | Desconecta WhatsApp |
-| `POST` | `/api/campaigns/send` | Envía mensaje masivo a todos (solo admin) |
-| `GET` | `/api/health` | Verifica que el servidor esté corriendo |
-
----
-
-## Eventos en tiempo real (Socket.IO)
-
-El servidor emite estos eventos a los navegadores conectados:
-
-| Evento | Cuándo ocurre |
-|---|---|
-| `registration:new` | Alguien se registra → admin ve la notificación al instante |
-| `drop:state` | El admin cambia el estado → la landing se actualiza sola |
-| `wa:status` | El estado de WhatsApp cambia (conectado, desconectado, etc.) |
-| `wa:qr` | Se genera un nuevo código QR para conectar WhatsApp |
-| `campaign:progress` | Progreso del envío masivo de mensajes |
-
----
-
-## Variables de entorno
-
-Copia el archivo `.env.example` y renómbralo `.env`:
-
-```env
-# Puerto donde corre el servidor
-PORT=4000
-
-# URL del frontend (para CORS)
-FRONTEND_URL=http://localhost:3000
-
-# Base de datos
-MONGODB_URI=mongodb://127.0.0.1:27017/cuscus-hats
-
-# Contraseña del panel de administración
-ADMIN_SECRET=tu_contraseña_aqui
-
-# URL pública de la tienda (para mensajes de WhatsApp)
-BRAND_URL=https://cuscushats.com
-
-# Twilio (opcional, alternativa de WhatsApp por API)
-TWILIO_ACCOUNT_SID=
-TWILIO_AUTH_TOKEN=
-TWILIO_WHATSAPP_FROM=
-```
-
----
-
-## Estructura de carpetas
-
-```
-backend/
-├── src/
-│   ├── index.js          → Punto de entrada, configura Express y Socket.IO
-│   ├── db/
-│   │   └── connection.js → Conexión a MongoDB
-│   ├── middleware/
-│   │   └── auth.js       → Verificación de contraseña admin
-│   ├── models/
-│   │   ├── Registration.js → Modelo de registro (número + fecha)
-│   │   └── Config.js       → Modelo genérico para configuraciones
-│   ├── routes/
-│   │   ├── registrations.js → Rutas de pre-registros
-│   │   ├── countdown.js     → Rutas del contador
-│   │   ├── drop.js          → Rutas del estado del drop
-│   │   ├── whatsapp.js      → Rutas de conexión WhatsApp
-│   │   └── campaigns.js     → Rutas de envío masivo
-│   ├── services/
-│   │   └── whatsappBaileys.js → Conexión directa a WhatsApp vía QR
-│   ├── socket/
-│   │   └── index.js       → Configuración de Socket.IO y eventos
-│   └── state/
-│       └── dropState.js   → Lógica del estado del drop
-└── .env.example
-```
-
----
-
-## Cómo correr el backend
-
-```bash
-# Instalar dependencias
-npm install
-
-# Modo desarrollo con auto-recarga (puerto 4000)
-npm run dev
-
-# Modo producción
-npm run start
-```
-
-> Asegúrate de tener MongoDB corriendo antes de arrancar el servidor.
+### Comunica todo en tiempo real
+Usa una conexión permanente entre el servidor y los navegadores para que cualquier cambio se refleje al instante: un nuevo registro aparece en el admin sin recargar, el sold-out cambia la landing de todos los visitantes, y el estado de WhatsApp se actualiza en vivo.
 
 ---
 
 ## Base de datos
 
-El servidor usa **MongoDB** con dos colecciones:
+Usa **MongoDB** con dos colecciones:
 
-- **registrations** — Guarda cada número registrado con su fecha de creación. Tiene un índice único en el número para evitar duplicados.
-- **config** — Almacena configuraciones clave-valor como la fecha del countdown y el estado del drop.
+- **Registros** — Guarda cada número de WhatsApp con la fecha y hora exacta en que se registró. Garantiza que no haya duplicados.
+- **Configuración** — Almacena la fecha del countdown y el estado actual del drop para que persistan aunque el servidor se reinicie.
+
+---
+
+## Comunicación en tiempo real
+
+El servidor mantiene una conexión abierta con todos los navegadores. Así funciona:
+
+| Qué pasa | Qué se comunica |
+|---|---|
+| Alguien se registra | El admin recibe una notificación con el número y el país |
+| El admin activa Sold Out | La landing de todos los visitantes cambia al instante |
+| WhatsApp se conecta o desconecta | El panel de admin muestra el nuevo estado |
+| Se envía un mensaje masivo | El admin ve el progreso en tiempo real |
+
+---
+
+## WhatsApp
+
+La integración de WhatsApp funciona sin APIs externas de pago. El servidor usa una librería que simula la conexión de WhatsApp Web: genera un código QR que el admin escanea con su teléfono, y a partir de ahí el servidor queda vinculado a esa cuenta para enviar mensajes.
+
+La sesión se guarda localmente, así que no hace falta volver a escanear el QR cada vez que se reinicia el servidor.
+
+---
+
+## Licencia
+
+Todos los derechos reservados © 2026 — Cuscus Hats. Proyecto de uso privado para la marca.

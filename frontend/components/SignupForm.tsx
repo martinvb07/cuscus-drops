@@ -211,14 +211,15 @@ export default function SignupForm() {
             placeholder="Número de WhatsApp"
             inputMode="tel"
             required
-            className="flex-1 bg-transparent border-0 outline-none text-bone py-0 px-3 h-[44px] text-[10px] tracking-[0.18em] font-mono placeholder:text-bone-3 placeholder:tracking-[0.12em] min-w-0"
+            className="flex-1 bg-transparent border-0 outline-none text-bone py-0 px-3 h-[44px] tracking-[0.18em] font-mono placeholder:text-bone-3 placeholder:tracking-[0.12em] min-w-0"
+            style={{ fontSize: '16px' }}
           />
 
           {open && (
             <div className="absolute left-0 top-full mt-[2px] z-50 border border-[var(--line-strong)] bg-[#0e0e0e] shadow-[0_8px_32px_rgba(0,0,0,0.8)]" style={{ width: 'max(240px,100%)' }}>
               <div className="border-b border-[var(--line)] px-3 py-2 flex items-center gap-2">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-bone-3 shrink-0"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input ref={searchRef} type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar país..." className="flex-1 bg-transparent border-0 outline-none text-bone text-[10px] font-mono tracking-[0.12em] placeholder:text-bone-3 min-w-0" />
+                <input ref={searchRef} type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="Buscar país..." className="flex-1 bg-transparent border-0 outline-none text-bone font-mono tracking-[0.12em] placeholder:text-bone-3 min-w-0" style={{ fontSize: '16px' }} />
               </div>
               <ul className="max-h-[180px] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(235,230,219,0.2) transparent' }}>
                 {filtered.length === 0

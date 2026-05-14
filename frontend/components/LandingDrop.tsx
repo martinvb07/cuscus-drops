@@ -228,8 +228,8 @@ export default function LandingDrop({
   return (
     <>
       {/* LIMITED · LOGO · DROP */}
-      <div className="flex items-center justify-center gap-3 sm:gap-5">
-        <span className="font-mono font-bold text-[10px] sm:text-[11px] tracking-[0.28em] text-bone uppercase">
+      <div className="grid items-center w-full" style={{ gridTemplateColumns: '1fr auto 1fr', gap: '12px' }}>
+        <span className="font-mono font-bold text-[10px] sm:text-[11px] tracking-[0.28em] text-bone uppercase text-right">
           Limited
         </span>
         <Image
@@ -241,7 +241,7 @@ export default function LandingDrop({
           className="object-contain w-[26vw] h-[26vw] max-w-[110px] max-h-[110px] sm:max-w-[120px] sm:max-h-[120px] md:max-w-[135px] md:max-h-[135px] block shrink-0"
           style={{ filter: 'brightness(0) invert(1)' }}
         />
-        <span className="font-mono font-bold text-[10px] sm:text-[11px] tracking-[0.28em] text-bone uppercase">
+        <span className="font-mono font-bold text-[10px] sm:text-[11px] tracking-[0.28em] text-bone uppercase text-left">
           Drop
         </span>
       </div>

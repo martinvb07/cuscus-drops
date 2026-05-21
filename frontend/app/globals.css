@@ -3,47 +3,33 @@
 @tailwind utilities;
 
 :root {
-  --ink: #0a0a0a;
-  --bone: #ebe6db;
-  --bone-2: #cfc8b8;
-  --bone-3: #7a7567;
-  --line: rgba(235, 230, 219, 0.18);
-  --line-strong: rgba(235, 230, 219, 0.45);
+  --ink:        #0a0a0a;
+  --bone:       #ebe6db;
+  --bone-2:     #cfc8b8;
+  --bone-3:     #7a7567;
+  --line:       rgba(235, 230, 219, 0.14);
+  --line-strong: rgba(235, 230, 219, 0.38);
+  --green:      #3ecf8e;
+  --red:        #e05c5c;
+  --yellow:     #f5c842;
 }
 
-html {
-  height: 100%;
-}
+html { height: 100%; }
 
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
   background: var(--ink);
   color: var(--bone);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* Permite scroll en main cuando el contenido no cabe en pantalla */
-main {
-  scrollbar-width: none;
-}
-main::-webkit-scrollbar {
-  display: none;
-}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
-
-/* Film grain overlay */
+/* Film grain */
 .grain::before {
   content: '';
   position: fixed;
@@ -52,174 +38,54 @@ button {
   z-index: 60;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.7 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
   mix-blend-mode: overlay;
-  opacity: 0.18;
+  opacity: 0.14;
 }
 
-/* Vignette overlay */
-.vignette::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 50;
-  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.85) 100%);
-}
-
-/* Shooting star element */
+/* Shooting stars */
 .shoot {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 140px;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(235, 230, 219, 0) 0%,
-    rgba(235, 230, 219, 0.95) 60%,
-    #fff 100%
-  );
+  top: 0; left: 0;
+  width: 140px; height: 2px;
+  background: linear-gradient(90deg, rgba(235,230,219,0) 0%, rgba(235,230,219,0.95) 60%, #fff 100%);
   border-radius: 2px;
-  filter: drop-shadow(0 0 6px rgba(235, 230, 219, 0.7));
+  filter: drop-shadow(0 0 6px rgba(235,230,219,0.7));
   opacity: 0;
   transform-origin: right center;
 }
-
 .shoot::after {
   content: '';
   position: absolute;
-  right: -2px;
-  top: -2px;
-  width: 6px;
-  height: 6px;
+  right: -2px; top: -2px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 12px 2px rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 12px 2px rgba(255,255,255,0.9);
 }
-
 @keyframes shoot {
-  0% {
-    opacity: 0;
-    transform: translate(0, 0) rotate(var(--ang));
-  }
-  8% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--dx), var(--dy)) rotate(var(--ang));
-  }
+  0%   { opacity: 0; transform: translate(0,0) rotate(var(--ang)); }
+  8%   { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx),var(--dy)) rotate(var(--ang)); }
 }
 
-@keyframes tw {
-  0%, 100% {
-    opacity: 0.15;
-    transform: scale(0.7);
-    box-shadow: none;
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.4);
-    box-shadow:
-      0 0 4px 1px rgba(255, 255, 255, 0.95),
-      0 0 10px 4px rgba(235, 230, 219, 0.6),
-      0 0 22px 8px rgba(235, 230, 219, 0.25);
-  }
-}
+/* Admin table */
+.admin-table th { text-align: left; font-weight: 500; }
+.admin-table tr:hover td { background: rgba(235,230,219,0.04); }
 
-@keyframes tw-bright {
-  0%, 100% {
-    opacity: 0.25;
-    transform: scale(0.65);
-    box-shadow: 0 0 3px 1px rgba(255, 255, 255, 0.4);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.7);
-    box-shadow:
-      0 0 6px 3px rgba(255, 255, 255, 1),
-      0 0 18px 7px rgba(235, 230, 219, 0.85),
-      0 0 36px 14px rgba(235, 230, 219, 0.35);
-  }
-}
-
-/* Countdown cell corner brackets */
-.cd-cell {
-  position: relative;
-}
-
-.cd-cell::before,
-.cd-cell::after {
-  content: '';
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border: 1px solid var(--bone-2);
-}
-
-.cd-cell::before {
-  top: -1px;
-  left: -1px;
-  border-right: none;
-  border-bottom: none;
-}
-
-.cd-cell::after {
-  bottom: -1px;
-  right: -1px;
-  border-left: none;
-  border-top: none;
-}
-
-/* Colombia flag — colores reales */
-.flag {
-  width: 22px;
-  height: 15px;
-  background: linear-gradient(
-    180deg,
-    #FCD116 0% 50%,
-    #003893 50% 75%,
-    #CE1126 75% 100%
-  );
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
   border-radius: 2px;
-  flex-shrink: 0;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.12);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
 }
-
-.flag::after {
-  display: none;
-}
-
-/* Wordmark spectrum — muted rainbow, premium feel */
-.wordmark-spectrum {
-  background: linear-gradient(
-    90deg,
-    hsl(30,  50%, 72%),
-    hsl(60,  38%, 72%),
-    hsl(120, 26%, 70%),
-    hsl(180, 30%, 68%),
-    hsl(220, 38%, 70%),
-    hsl(270, 30%, 70%),
-    hsl(320, 36%, 70%),
-    hsl(0,   40%, 70%),
-    hsl(30,  50%, 72%)
-  );
-  background-size: 300% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: spectrum-shift 10s linear infinite;
-}
-
-@keyframes spectrum-shift {
-  from { background-position: 0% center; }
-  to   { background-position: 300% center; }
-}
-
-@media (max-width: 820px) {
-  footer {
-    flex-direction: column;
-    gap: 10px;
-    padding: 18px;
-    text-align: center;
-  }
-}
+.badge-paid        { background: rgba(62,207,142,0.15); color: #3ecf8e; border: 1px solid rgba(62,207,142,0.3); }
+.badge-pending     { background: rgba(245,200,66,0.12);  color: #f5c842; border: 1px solid rgba(245,200,66,0.3); }
+.badge-refunded    { background: rgba(224,92,92,0.12);   color: #e05c5c; border: 1px solid rgba(224,92,92,0.3); }
+.badge-unfulfilled { background: rgba(235,230,219,0.08); color: var(--bone-3); border: 1px solid var(--line); }
+.badge-dispatched  { background: rgba(62,207,142,0.1);   color: #3ecf8e; border: 1px solid rgba(62,207,142,0.25); }
+.badge-delivered   { background: rgba(62,207,142,0.2);   color: #3ecf8e; border: 1px solid rgba(62,207,142,0.4); }
+.badge-in_transit  { background: rgba(99,179,237,0.12);  color: #63b3ed; border: 1px solid rgba(99,179,237,0.3); }

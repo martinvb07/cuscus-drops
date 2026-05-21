@@ -1,10 +1,10 @@
 {
-  "name": "cuscus-hats",
+  "name": "cuscus-hats-drop1",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev:backend": "cd backend && npm run dev",
+    "dev:backend":  "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "install:all": "npm install --prefix backend && npm install --prefix frontend"
+    "install:all":  "npm install --prefix backend && npm install --prefix frontend"
   }
 }

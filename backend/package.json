@@ -1,21 +1,16 @@
 {
-  "name": "cuscus-hats-backend",
+  "name": "cuscus-hats-fase2-backend",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
     "start": "node src/index.js"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^7.0.0-rc11",
     "cors": "^2.8.5",
-    "cuscus-hats": "file:..",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "mongoose": "^9.6.2",
-    "pino": "^10.3.1",
-    "qrcode": "^1.5.4",
-    "socket.io": "^4.8.3",
-    "twilio": "^5.3.3"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.0"
   }
 }

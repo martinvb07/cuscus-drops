@@ -24,18 +24,18 @@ export default function PreBuyButton({ available }: { available: number | null }
 
   if (soldOut) {
     return (
-      <div className="w-full max-w-[440px] border border-[var(--line)] py-[14px] px-4 font-mono text-[11px] tracking-[0.32em] uppercase text-center text-bone-3">
-        Agotado
+      <div className="w-full border border-[var(--line)] py-4 px-6 font-mono text-[10px] tracking-[0.45em] uppercase text-center text-bone-3">
+        Agotado &nbsp;·&nbsp; Drop #1 cerrado
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-[440px] flex flex-col items-center gap-2">
+    <div className="flex flex-col gap-3 w-full">
       <button
         onClick={handleBuy}
         disabled={loading}
-        className="w-full bg-bone text-ink border border-bone py-[14px] px-4 font-mono text-[11px] tracking-[0.32em] uppercase flex items-center justify-center gap-3 transition-all duration-200 hover:bg-transparent hover:text-bone disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-bone text-ink py-4 sm:py-[18px] px-6 font-mono text-[10px] tracking-[0.42em] uppercase flex items-center justify-center gap-3 transition-all duration-300 hover:bg-[rgba(235,230,219,0.88)] active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {loading ? (
           <>
@@ -44,16 +44,22 @@ export default function PreBuyButton({ available }: { available: number | null }
           </>
         ) : (
           <>
-            Pre-comprar ahora
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-              <path d="M12 0 L13 10 L24 12 L13 14 L12 24 L11 14 L0 12 L11 10 Z" />
+            Comprar ahora
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </>
         )}
       </button>
-      {error && <p className="font-mono text-[10px] text-[#e05c5c] tracking-wider">{error}</p>}
-      <p className="font-mono text-[9px] tracking-[0.2em] text-bone-3 uppercase text-center">
-        Pago seguro vía Shopify · COP / USD
+
+      {error && (
+        <p className="font-mono text-[9px] text-[#e05c5c] tracking-[0.2em] text-center">
+          {error}
+        </p>
+      )}
+
+      <p className="font-mono text-[8px] tracking-[0.25em] text-bone-3 uppercase text-center">
+        Pago seguro vía Shopify &nbsp;·&nbsp; COP
       </p>
     </div>
   );

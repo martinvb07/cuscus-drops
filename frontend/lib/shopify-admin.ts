@@ -217,6 +217,33 @@ export async function updateDropStatus(
   }
 }
 
+/* ── Checkout directo via Draft Order ─────────────────────────────────────── */
+export async function createDraftOrderCheckout(variantId: string, quantity = 1): Promise<string> {
+  type Data = {
+    draftOrderCreate: {
+      draftOrder: { id: string; invoiceUrl: string } | null;
+      userErrors: { field: string[]; message: string }[];
+    };
+  };
+
+  const data = await adminGql<Data>(
+    `mutation($input: DraftOrderInput!) {
+      draftOrderCreate(input: $input) {
+        draftOrder { id invoiceUrl }
+        userErrors  { field message }
+      }
+    }`,
+    { input: { lineItems: [{ variantId, quantity }] } },
+  );
+
+  const errs = data.draftOrderCreate.userErrors;
+  if (errs.length > 0) throw new Error(errs[0].message);
+
+  const url = data.draftOrderCreate.draftOrder?.invoiceUrl;
+  if (!url) throw new Error('Shopify no devolvió URL de checkout');
+  return url;
+}
+
 /* ── Recent orders ─────────────────────────────────────────────────────────── */
 export interface AdminOrder {
   id:               string;

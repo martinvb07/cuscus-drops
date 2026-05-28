@@ -1,6 +1,7 @@
-const DOMAIN      = process.env.SHOPIFY_STORE_DOMAIN;
-const ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
-const API_VER     = '2025-01';
+const DOMAIN          = process.env.SHOPIFY_STORE_DOMAIN;
+const CHECKOUT_DOMAIN = process.env.SHOPIFY_CHECKOUT_DOMAIN || DOMAIN;
+const ADMIN_TOKEN     = process.env.SHOPIFY_ADMIN_TOKEN;
+const API_VER         = '2025-01';
 
 function numericId(gid: string): string {
   return gid.split('/').pop() ?? gid;
@@ -21,7 +22,7 @@ async function adminRest(path: string) {
 /* ── Crear URL de checkout directa ─────────────────────────────────────────── */
 export async function createCheckout(variantId: string, quantity = 1): Promise<string> {
   if (!DOMAIN) throw new Error('SHOPIFY_STORE_DOMAIN no configurado');
-  return `https://${DOMAIN}/cart/${numericId(variantId)}:${quantity}`;
+  return `https://${CHECKOUT_DOMAIN}/cart/${numericId(variantId)}:${quantity}`;
 }
 
 /* ── Stock disponible ─────────────────────────────────────────────────────── */

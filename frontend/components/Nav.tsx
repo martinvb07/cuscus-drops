@@ -3,65 +3,80 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+const CENTER_LINKS = [
+  { label: 'Collection', href: '#drop'      },
+  { label: 'Drop',       href: '#drop'      },
+  { label: 'Manifiesto', href: '#manifesto' },
+  { label: 'Envíos',     href: '#footer'    },
+];
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-4 sm:px-8 lg:px-12 py-4 sm:py-5 transition-all duration-500"
+      className="fixed top-0 left-0 right-0 z-40 grid items-center px-8 sm:px-10 lg:px-14 transition-all duration-700"
       style={{
-        background:     scrolled ? 'rgba(10,10,10,0.85)' : 'transparent',
-        borderBottom:   scrolled ? '1px solid rgba(235,230,219,0.08)' : '1px solid transparent',
-        backdropFilter: scrolled ? 'blur(14px)' : 'none',
-        WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
+        gridTemplateColumns:  '1fr auto 1fr',
+        height:               '70px',
+        background:           scrolled ? 'rgba(10,10,10,0.92)' : 'transparent',
+        borderBottom:         scrolled ? '1px solid rgba(235,230,219,0.07)' : '1px solid transparent',
+        backdropFilter:       scrolled ? 'blur(24px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(24px)' : 'none',
       }}
     >
-
-      {/* Logo */}
-      <a href="/" className="flex items-center shrink-0">
+      {/* Logo — CC mark */}
+      <a href="/" className="flex items-center">
         <Image
-          src="/NOMBRE_FINAL.png"
+          src="/LOGO_FINAL.png"
           alt="Cuscus Hats"
-          width={110} height={30}
-          className="h-auto w-[72px] sm:w-[90px]"
-          style={{ filter: 'brightness(0) invert(1)' }}
+          width={38}
+          height={38}
+          style={{
+            filter:     'brightness(0) invert(1)',
+            opacity:    scrolled ? 0.92 : 0.84,
+            transition: 'opacity 0.7s ease',
+            height:     'auto',
+            width:      'clamp(30px, 2.8vw, 38px)',
+          }}
           priority
         />
       </a>
 
-      {/* Right actions */}
-      <div className="flex items-center gap-3 sm:gap-5">
-        <a
-          href="#"
-          className="hidden sm:flex items-center gap-2 font-mono text-[9px] tracking-[0.30em] uppercase text-bone-3 hover:text-bone transition-colors duration-200"
-        >
-          <svg
-            className="w-3.5 h-3.5 stroke-current fill-none shrink-0"
-            style={{ strokeWidth: 1.4 }}
-            viewBox="0 0 24 24"
+      {/* Center links */}
+      <div className="hidden lg:flex items-center gap-10">
+        {CENTER_LINKS.map(({ label, href }) => (
+          <a
+            key={label}
+            href={href}
+            className="font-mono text-[8px] tracking-[0.40em] uppercase text-bone-3 hover:text-bone transition-colors duration-500"
           >
-            <path d="M3 16V6h11v10H3z" />
-            <path d="M14 9h5l2 3v4h-7" />
-            <circle cx="7" cy="18" r="2" />
-            <circle cx="17" cy="18" r="2" />
-          </svg>
-          Estado del envío
-        </a>
+            {label}
+          </a>
+        ))}
+      </div>
 
+      {/* Right — status + buy CTA */}
+      <div className="flex items-center justify-end gap-5">
+        <span
+          className="hidden md:block font-mono text-[7px] tracking-[0.32em] text-bone-3 uppercase"
+          style={{ opacity: 0.30 }}
+        >
+          Drop Activo
+        </span>
         <a
           href="#drop"
-          className="font-mono text-[9px] sm:text-[10px] tracking-[0.32em] uppercase text-bone border border-[var(--line)] px-4 sm:px-6 py-2 sm:py-[9px] hover:border-[var(--line-strong)] hover:bg-[rgba(235,230,219,0.06)] transition-all duration-250"
+          className="font-mono text-[8px] tracking-[0.38em] uppercase text-bone border border-[rgba(235,230,219,0.22)] px-6 py-[10px] hover:border-[rgba(235,230,219,0.50)] hover:bg-[rgba(235,230,219,0.05)] transition-all duration-500"
         >
           Comprar
         </a>
       </div>
-
     </nav>
   );
 }

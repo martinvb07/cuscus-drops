@@ -31,7 +31,7 @@ export default function StockBadge({
       {/* Label row */}
       <div className="flex items-center justify-between w-full font-mono text-[9px] sm:text-[10px] tracking-[0.28em] uppercase">
         {available === null ? (
-          <span className="text-bone-3">Verificando disponibilidad...</span>
+          <span className="text-bone-3 opacity-40">— — —</span>
         ) : available <= 0 ? (
           <span className="text-[#e05c5c]">Agotado &mdash; sin reposición</span>
         ) : (

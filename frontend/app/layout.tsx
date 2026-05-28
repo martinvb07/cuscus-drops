@@ -1,9 +1,5 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, JetBrains_Mono, Pirata_One } from 'next/font/google';
-import Nav          from '@/components/Nav';
-import Loader       from '@/components/Loader';
-import CustomCursor from '@/components/CustomCursor';
-import LenisProvider from '@/components/LenisProvider';
+import { Cormorant_Garamond, JetBrains_Mono, Bokor, Bebas_Neue } from 'next/font/google';
 import './globals.css';
 
 const garamond = Cormorant_Garamond({
@@ -19,10 +15,16 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 });
 
-const pirataOne = Pirata_One({
+const gothic = Bokor({
+  subsets:  ['latin'],
+  weight:   ['400'],
+  variable: '--font-gothic',
+});
+
+const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
   weight:  ['400'],
-  variable: '--font-gothic',
+  variable: '--font-bebas',
 });
 
 export const metadata: Metadata = {
@@ -35,15 +37,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body
-        className={`${garamond.variable} ${jetbrainsMono.variable} ${pirataOne.variable} grain`}
+        className={`${garamond.variable} ${jetbrainsMono.variable} ${gothic.variable} ${bebasNeue.variable} grain`}
         suppressHydrationWarning
       >
-        <Loader />
-        <CustomCursor />
-        <LenisProvider>
-          <Nav />
-          {children}
-        </LenisProvider>
+        {children}
       </body>
     </html>
   );

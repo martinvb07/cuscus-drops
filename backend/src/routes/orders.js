@@ -1,6 +1,7 @@
 import { Router }  from 'express';
 import Order        from '../models/Order.js';
-import { requireAdmin } from '../middleware/auth.js';
+import { requireAdmin }            from '../middleware/auth.js';
+import { createShopifyFulfillment, cancelShopifyOrder } from '../services/shopifyAdmin.js';
 
 const router = Router();
 router.use(requireAdmin);
@@ -122,6 +123,32 @@ router.get('/export.csv', async (_req, res) => {
   }
 });
 
+// GET /api/orders/customers  — clientes únicos agrupados por email
+router.get('/customers', async (_req, res) => {
+  try {
+    const customers = await Order.aggregate([
+      {
+        $group: {
+          _id:         '$customer.email',
+          firstName:   { $last: '$customer.firstName' },
+          lastName:    { $last: '$customer.lastName' },
+          email:       { $last: '$customer.email' },
+          phone:       { $last: '$customer.phone' },
+          city:        { $last: '$shippingAddress.city' },
+          country:     { $last: '$shippingAddress.country' },
+          totalOrders: { $sum: 1 },
+          totalSpent:  { $sum: { $toDouble: '$totalPrice' } },
+          lastOrder:   { $max: '$shopifyCreatedAt' },
+        },
+      },
+      { $sort: { lastOrder: -1 } },
+    ]);
+    res.json(customers);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/orders/:id
 router.get('/:id', async (req, res) => {
   try {
@@ -150,6 +177,24 @@ router.patch('/:id', async (req, res) => {
 
     const order = await Order.findByIdAndUpdate(req.params.id, { $set: update }, { new: true });
     if (!order) return res.status(404).json({ error: 'Orden no encontrada' });
+
+    // ── Sync Cuscus → Shopify ─────────────────────────────────────────────
+    if (fulfillmentStatus === 'dispatched' && order.shopifyOrderId) {
+      // Fire-and-forget: no bloquea la respuesta al admin
+      createShopifyFulfillment({
+        shopifyOrderId:  order.shopifyOrderId,
+        trackingNumber:  update.trackingNumber  || order.trackingNumber  || '',
+        trackingCompany: update.trackingCompany || order.trackingCompany || '',
+        trackingUrl:     update.trackingUrl     || order.trackingUrl     || '',
+      }).catch(err => console.error('❌ Shopify sync:', err.message));
+    }
+
+    if (fulfillmentStatus === 'cancelled' && order.shopifyOrderId) {
+      cancelShopifyOrder(order.shopifyOrderId)
+        .catch(err => console.error('❌ Shopify cancel sync:', err.message));
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     res.json(order);
   } catch (err) {
     res.status(500).json({ error: err.message });

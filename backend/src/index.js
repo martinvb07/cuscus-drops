@@ -2,8 +2,9 @@ import express   from 'express';
 import cors      from 'cors';
 import dotenv    from 'dotenv';
 import { connectDB } from './db/connection.js';
-import ordersRouter  from './routes/orders.js';
-import shopifyRouter from './routes/shopify.js';
+import ordersRouter    from './routes/orders.js';
+import shopifyRouter   from './routes/shopify.js';
+import analyticsRouter from './routes/analytics.js';
 
 dotenv.config();
 
@@ -23,17 +24,15 @@ app.use((req, _res, next) => {
   });
 });
 
-app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'fase2' }));
-app.use('/api/orders',          ordersRouter);
-app.use('/api/shopify',         shopifyRouter);
+app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'cuscus-hats', ts: new Date().toISOString() }));
+app.use('/api/orders',    ordersRouter);
+app.use('/api/shopify',   shopifyRouter);
+app.use('/api/analytics', analyticsRouter);
+
+app.listen(PORT, () => {
+  console.log(`🎩 Cuscus Hats backend → http://localhost:${PORT}`);
+});
 
 connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`🎩 Cuscus Hats Fase 2 backend → http://localhost:${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('❌ MongoDB:', err.message);
-    process.exit(1);
-  });
+  .then(() => console.log('✅ MongoDB conectado'))
+  .catch(err => console.warn(`⚠️  MongoDB no disponible (${err.message}) — continuando sin DB`));

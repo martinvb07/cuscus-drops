@@ -33,6 +33,10 @@ router.post('/webhook', async (req, res) => {
       await upsertOrder(data);
     } else if (topic === 'orders/updated') {
       await updateOrderStatus(data);
+    } else if (topic === 'inventory_levels/update') {
+      await updateInventoryCache(data);
+    } else if (topic === 'fulfillments/create') {
+      await handleFulfillmentCreated(data);
     }
     res.status(200).send('OK');
   } catch (err) {
@@ -112,6 +116,37 @@ async function updateOrderStatus(shopifyOrder) {
       },
     }
   );
+}
+
+async function updateInventoryCache(data) {
+  // Store latest inventory level for fast reads
+  await Order.db.collection('inventory_cache').updateOne(
+    { inventoryItemId: String(data.inventory_item_id) },
+    {
+      $set: {
+        inventoryItemId: String(data.inventory_item_id),
+        locationId:      String(data.location_id),
+        available:       data.available,
+        updatedAt:       new Date(),
+      },
+    },
+    { upsert: true },
+  );
+  console.log(`📦 Inventario actualizado: ${data.available} disponibles`);
+}
+
+async function handleFulfillmentCreated(data) {
+  const shopifyOrderId = String(data.order_id);
+  const update = {
+    fulfillmentStatus: 'dispatched',
+    dispatchedAt:      new Date(),
+  };
+  if (data.tracking_number)  update.trackingNumber  = data.tracking_number;
+  if (data.tracking_company) update.trackingCompany = data.tracking_company;
+  if (data.tracking_url)     update.trackingUrl     = data.tracking_url;
+
+  await Order.findOneAndUpdate({ shopifyOrderId }, { $set: update });
+  console.log(`🚚 Fulfillment creado para orden ${shopifyOrderId}`);
 }
 
 function mapFinancial(status) {

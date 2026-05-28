@@ -14,6 +14,7 @@ const config: Config = {
         gothic:   ['var(--font-gothic)'],
         garamond: ['var(--font-garamond)'],
         mono:     ['var(--font-mono)'],
+        bebas:    ['var(--font-bebas)'],
       },
     },
   },

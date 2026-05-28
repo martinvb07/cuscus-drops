@@ -93,7 +93,7 @@ export default function ProductViewer360() {
       <div
         className="relative overflow-hidden rounded-sm"
         style={{
-          background:  '#ffffff',
+          background:  'transparent',
           aspectRatio: '1 / 1',
           cursor:      dragging ? 'grabbing' : 'grab',
         }}
@@ -123,7 +123,6 @@ export default function ProductViewer360() {
                 fill
                 sizes="520px"
                 className="object-contain p-6 sm:p-10"
-                style={{ mixBlendMode: 'multiply' }}
                 priority={i === 0}
                 draggable={false}
               />

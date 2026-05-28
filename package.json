@@ -2,6 +2,7 @@
   "name": "cuscus-hats-drop1",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev:backend":  "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",

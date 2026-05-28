@@ -76,7 +76,12 @@ export async function createCart(variantId: string, quantity = 1): Promise<Store
   if (!cart) throw new Error('No se pudo crear el carrito');
 
   // En producción reemplaza el dominio por cuscus.co
-  const checkoutUrl = cart.checkoutUrl.replace(DOMAIN, CHECKOUT_DOMAIN);
+  const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
+  const returnUrl = encodeURIComponent(`${siteUrl}/success`);
+
+  let checkoutUrl = cart.checkoutUrl.replace(DOMAIN, CHECKOUT_DOMAIN);
+  const sep = checkoutUrl.includes('?') ? '&' : '?';
+  checkoutUrl += `${sep}return_to=${returnUrl}`;
 
   return {
     id:          cart.id,

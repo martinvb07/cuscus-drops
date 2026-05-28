@@ -1,7 +1,7 @@
 /**
- * Shopify Storefront API — checkout headless.
- * Requiere SHOPIFY_STOREFRONT_TOKEN (token público, no el Admin).
- * Crea un checkout que va directo al pago de Shopify, sin pasar por el storefront.
+ * Shopify Storefront Cart API (2025-01)
+ * Crea un carrito headless → checkoutUrl va directo al pago de Shopify.
+ * Token público — no contiene credenciales sensibles.
  */
 
 const DOMAIN           = process.env.SHOPIFY_STORE_DOMAIN!;
@@ -12,19 +12,16 @@ const API_VER          = '2025-01';
 async function storefrontGql<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   if (!STOREFRONT_TOKEN) throw new Error('SHOPIFY_STOREFRONT_TOKEN no configurado');
 
-  const res = await fetch(
-    `https://${DOMAIN}/api/${API_VER}/graphql.json`,
-    {
-      method:  'POST',
-      headers: {
-        'Content-Type':                       'application/json',
-        'X-Shopify-Storefront-Access-Token':  STOREFRONT_TOKEN,
-      },
-      body:    JSON.stringify({ query, variables }),
-      cache:   'no-store',
-      signal:  AbortSignal.timeout(10_000),
+  const res = await fetch(`https://${DOMAIN}/api/${API_VER}/graphql.json`, {
+    method:  'POST',
+    headers: {
+      'Content-Type':                       'application/json',
+      'X-Shopify-Storefront-Access-Token':  STOREFRONT_TOKEN,
     },
-  );
+    body:   JSON.stringify({ query, variables }),
+    cache:  'no-store',
+    signal: AbortSignal.timeout(10_000),
+  });
 
   if (!res.ok) throw new Error(`Storefront API error: ${res.status}`);
   const json = await res.json();
@@ -32,73 +29,60 @@ async function storefrontGql<T>(query: string, variables?: Record<string, unknow
   return json.data as T;
 }
 
-export interface StorefrontCheckout {
-  id:      string;
-  webUrl:  string;    // URL directa al checkout de Shopify (sin storefront)
-  totalPrice: { amount: string; currencyCode: string };
+export interface StorefrontCart {
+  id:          string;
+  checkoutUrl: string;
+  total:       { amount: string; currencyCode: string };
 }
 
 /**
- * Crea un checkout de Shopify que:
- * 1. Va directo al pago (webUrl) — sin pasar por el storefront/carrito
- * 2. Después del pago redirige a returnUrl con el estado de la orden
+ * Crea un carrito via Storefront Cart API y devuelve el checkoutUrl.
+ * El checkoutUrl va directo al checkout oficial de Shopify (sin storefront/tema).
  */
-export async function createStorefrontCheckout(
-  variantId: string,
-  quantity   = 1,
-  returnUrl  = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'}/success`,
-): Promise<StorefrontCheckout> {
+export async function createCart(variantId: string, quantity = 1): Promise<StorefrontCart> {
   type Data = {
-    checkoutCreate: {
-      checkout: {
-        id: string;
-        webUrl: string;
-        totalPriceV2: { amount: string; currencyCode: string };
+    cartCreate: {
+      cart: {
+        id:          string;
+        checkoutUrl: string;
+        cost: { totalAmount: { amount: string; currencyCode: string } };
       } | null;
-      checkoutUserErrors: { code: string; field: string[]; message: string }[];
+      userErrors: { field: string[]; message: string }[];
     };
   };
 
   const data = await storefrontGql<Data>(
-    `mutation checkoutCreate($input: CheckoutCreateInput!) {
-      checkoutCreate(input: $input) {
-        checkout {
+    `mutation cartCreate($input: CartInput!) {
+      cartCreate(input: $input) {
+        cart {
           id
-          webUrl
-          totalPriceV2 { amount currencyCode }
+          checkoutUrl
+          cost { totalAmount { amount currencyCode } }
         }
-        checkoutUserErrors { code field message }
+        userErrors { field message }
       }
     }`,
     {
       input: {
-        lineItems: [{ variantId, quantity }],
-        allowPartialAddresses: true,
-        presentmentCurrencyCode: 'COP',
+        lines: [{ quantity, merchandiseId: variantId }],
       },
     },
   );
 
-  const errs = data.checkoutCreate.checkoutUserErrors;
+  const errs = data.cartCreate.userErrors;
   if (errs.length > 0) throw new Error(errs[0].message);
 
-  const checkout = data.checkoutCreate.checkout;
-  if (!checkout) throw new Error('No se pudo crear el checkout');
+  const cart = data.cartCreate.cart;
+  if (!cart) throw new Error('No se pudo crear el carrito');
 
-  // Reemplaza dominio por el de checkout configurado (cuscushats.com en prod)
-  let webUrl = checkout.webUrl.replace(DOMAIN, CHECKOUT_DOMAIN);
-
-  // Agrega return_to para que Shopify muestre "Volver a la tienda" apuntando a nuestro /success
-  const sep = webUrl.includes('?') ? '&' : '?';
-  webUrl += `${sep}return_to=${encodeURIComponent(returnUrl)}`;
+  // En producción reemplaza el dominio por cuscus.co
+  const checkoutUrl = cart.checkoutUrl.replace(DOMAIN, CHECKOUT_DOMAIN);
 
   return {
-    id:         checkout.id,
-    webUrl,
-    totalPrice: checkout.totalPriceV2,
+    id:          cart.id,
+    checkoutUrl,
+    total:       cart.cost.totalAmount,
   };
 }
 
-export function storefrontConfigured(): boolean {
-  return Boolean(STOREFRONT_TOKEN);
-}
+export const storefrontConfigured = (): boolean => Boolean(STOREFRONT_TOKEN);

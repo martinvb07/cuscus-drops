@@ -1,6 +1,6 @@
 import { NextResponse }                                    from 'next/server';
 import { getStock }                                         from '@/lib/shopify';
-import { createStorefrontCheckout, storefrontConfigured }  from '@/lib/shopify-storefront';
+import { createCart, storefrontConfigured }  from '@/lib/shopify-storefront';
 import { createCheckout }                                   from '@/lib/shopify';
 
 const API = process.env.BACKEND_URL || 'http://localhost:4001';
@@ -35,8 +35,8 @@ export async function POST() {
 
     if (storefrontConfigured()) {
       // Storefront API → checkout directo sin pasar por el storefront de Shopify
-      const checkout = await createStorefrontCheckout(variantId, 1);
-      checkoutUrl    = checkout.webUrl;
+      const cart  = await createCart(variantId, 1);
+      checkoutUrl = cart.checkoutUrl;
     } else {
       // Fallback: URL de carrito (muestra el storefront de Shopify)
       checkoutUrl = await createCheckout(variantId, 1);

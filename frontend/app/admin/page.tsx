@@ -22,9 +22,14 @@ interface Order {
 }
 
 interface Stats {
-  total: number; paid: number; pending: number;
+  total: number; paid: number; authorized: number; pending: number;
   dispatched: number; delivered: number;
   available: number; stockTotal: number; revenue: number;
+}
+
+interface AnalyticsSummary {
+  last30d: { pageViews: number; checkoutClicks: number; checkoutStarts: number; orders: number; conversionRate: number };
+  funnel:  { _id: { date: string; event: string }; count: number }[];
 }
 
 interface Customer {
@@ -52,7 +57,7 @@ const FUL_CLS:   Record<FulfillmentStatus, string> = { unfulfilled: 'badge-unful
 
 function hdrs() { return { 'Content-Type': 'application/json', 'x-admin-token': PASS }; }
 
-type Section = 'dashboard' | 'drops' | 'pedidos' | 'inventario' | 'clientes' | 'shopify' | 'config';
+type Section = 'dashboard' | 'drops' | 'pedidos' | 'inventario' | 'clientes' | 'analiticas' | 'shopify' | 'config';
 
 /* ── Icons ─────────────────────────────────────────────────────────────────── */
 const ICONS: Record<Section, React.ReactElement> = {
@@ -61,6 +66,7 @@ const ICONS: Record<Section, React.ReactElement> = {
   pedidos:    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h10v10H2z" stroke="currentColor" strokeWidth="1.2"/><path d="M5 6h4M5 8.5h2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>,
   inventario: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 4v6l-6 3L1 10V4z" stroke="currentColor" strokeWidth="1.2"/><path d="M7 1v12M1 4l6 3 6-3" stroke="currentColor" strokeWidth="1.2"/></svg>,
   clientes:   <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.2"/><path d="M2 12c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>,
+  analiticas: <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 11l3.5-4 3 2.5L11 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/><path d="M9 4h2v2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>,
   shopify:    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 2.5C9 2 8.2 1.5 7 1.5c-1.5 0-2.5 1-2.5 2.5V5H3l-.5 7h9L11 5H9.5V4c0-.8-.5-1.5-1.5-1.5z" stroke="currentColor" strokeWidth="1.2"/></svg>,
   config:     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2" stroke="currentColor" strokeWidth="1.2"/><path d="M7 1v1.5M7 11.5V13M13 7h-1.5M2.5 7H1M11.24 2.76l-1.06 1.06M3.82 10.18l-1.06 1.06M11.24 11.24l-1.06-1.06M3.82 3.82L2.76 2.76" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>,
 };
@@ -71,6 +77,7 @@ const NAV: { id: Section; label: string; live?: true }[] = [
   { id: 'pedidos',    label: 'Pedidos',    live: true },
   { id: 'inventario', label: 'Inventario' },
   { id: 'clientes',   label: 'Clientes' },
+  { id: 'analiticas', label: 'Analíticas' },
   { id: 'shopify',    label: 'Shopify' },
   { id: 'config',     label: 'Config' },
 ];
@@ -98,6 +105,8 @@ export default function AdminPage() {
   const [customersLoading, setCustomersLoading] = useState(false);
   const [customerSearch,   setCustomerSearch]   = useState('');
   const [backendHealth,    setBackendHealth]     = useState<'unknown' | 'ok' | 'error'>('unknown');
+  const [analytics,        setAnalytics]        = useState<AnalyticsSummary | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [shopifyLive,      setShopifyLive]       = useState<ShopifyLiveData | null>(null);
   const [shopifyLoading,   setShopifyLoading]   = useState(false);
   const [product,          setProduct]          = useState<ProductDetails | null>(null);
@@ -170,6 +179,14 @@ export default function AdminPage() {
     catch { setBackendHealth('error'); }
   }
 
+  async function loadAnalytics() {
+    setAnalyticsLoading(true);
+    try {
+      const res = await fetch(`${API}/api/analytics/summary`, { headers: hdrs() });
+      if (res.ok) setAnalytics(await res.json());
+    } finally { setAnalyticsLoading(false); }
+  }
+
   const load = useCallback(async (p = page) => {
     const params = new URLSearchParams({ page: String(p), limit: '50' });
     if (search)      params.set('search',      search);
@@ -200,10 +217,11 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!authed) return;
-    if (section === 'clientes')  loadCustomers();
-    if (section === 'config')    checkHealth();
-    if (section === 'shopify')   loadShopifyLive();
-    if (section === 'drops')     loadProduct();
+    if (section === 'clientes')   loadCustomers();
+    if (section === 'config')     checkHealth();
+    if (section === 'shopify')    loadShopifyLive();
+    if (section === 'drops')      loadProduct();
+    if (section === 'analiticas') loadAnalytics();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authed, section]);
 
@@ -890,6 +908,72 @@ export default function AdminPage() {
               </div>
             )}
 
+            {/* ── ANALÍTICAS ───────────────────────────────────────────────── */}
+            {section === 'analiticas' && (
+              <div className="flex flex-col gap-4">
+                <SectionHeader label="Analíticas · Últimos 30 días">
+                  <button onClick={loadAnalytics} disabled={analyticsLoading} className="btn-secondary">
+                    {analyticsLoading ? 'Cargando...' : 'Actualizar'}
+                  </button>
+                </SectionHeader>
+
+                {analyticsLoading && !analytics ? (
+                  <LoadingState label="Cargando analíticas..." />
+                ) : analytics ? (
+                  <>
+                    {/* Funnel de conversión */}
+                    <Card>
+                      <CardTitle>Embudo de conversión · 30 días</CardTitle>
+                      <div className="flex flex-col gap-3 pt-1">
+                        {[
+                          { label: 'Visitas a la web',       value: analytics.last30d.pageViews,       color: '#63b3ed', pct: 100 },
+                          { label: 'Clic en "Comprar"',      value: analytics.last30d.checkoutClicks,  color: '#f5c842',
+                            pct: analytics.last30d.pageViews > 0 ? Math.round((analytics.last30d.checkoutClicks / analytics.last30d.pageViews) * 100) : 0 },
+                          { label: 'Checkout iniciado',      value: analytics.last30d.checkoutStarts,  color: 'var(--gold)',
+                            pct: analytics.last30d.checkoutClicks > 0 ? Math.round((analytics.last30d.checkoutStarts / analytics.last30d.checkoutClicks) * 100) : 0 },
+                          { label: 'Órdenes pagadas',        value: analytics.last30d.orders,          color: '#3ecf8e',
+                            pct: analytics.last30d.checkoutStarts > 0 ? Math.round((analytics.last30d.orders / analytics.last30d.checkoutStarts) * 100) : 0 },
+                        ].map(step => (
+                          <div key={step.label} className="flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-[8.5px] tracking-[0.18em] text-bone-3">{step.label}</span>
+                              <div className="flex items-baseline gap-2">
+                                <span className="font-bebas text-[22px] leading-none" style={{ color: step.color, letterSpacing: '0.02em' }}>
+                                  {step.value.toLocaleString()}
+                                </span>
+                                {step.pct < 100 && (
+                                  <span className="font-mono text-[7.5px] text-bone-3 opacity-50">{step.pct}%</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="h-[2px] bg-[var(--line)] overflow-hidden rounded-full">
+                              <div className="h-full rounded-full transition-all duration-700"
+                                style={{ width: `${step.pct}%`, background: step.color, opacity: 0.7 }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+
+                    {/* Tasa de conversión */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <MetricCard label="Tasa conversión"  value={`${analytics.last30d.conversionRate}%`} color="#3ecf8e"  sub="clics → órdenes" />
+                      <MetricCard label="Clics checkout"   value={analytics.last30d.checkoutClicks}       color="var(--gold)" sub="30 días" />
+                      <MetricCard label="Visitas totales"  value={analytics.last30d.pageViews}            color="#63b3ed"   sub="30 días" />
+                    </div>
+
+                    <p className="font-mono text-[7.5px] tracking-[0.2em] text-bone-3 opacity-30">
+                      Eventos registrados desde el backend · Se actualiza en cada visita y clic
+                    </p>
+                  </>
+                ) : (
+                  <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-bone-3 opacity-40 py-12 text-center">
+                    Haz clic en "Actualizar" para cargar las métricas
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* ── SHOPIFY ──────────────────────────────────────────────────── */}
             {section === 'shopify' && (
               <div className="flex flex-col gap-4 max-w-[640px]">
@@ -969,14 +1053,15 @@ export default function AdminPage() {
                 </Card>
 
                 <Card>
-                  <CardTitle>Variables configuradas</CardTitle>
+                  <CardTitle>Variables de entorno requeridas</CardTitle>
                   <div className="flex flex-col gap-0">
                     {[
-                      { key: 'SHOPIFY_STORE_DOMAIN',  loc: 'frontend', desc: 'gzqyqr-0k.myshopify.com',  ok: true },
-                      { key: 'SHOPIFY_ADMIN_TOKEN',    loc: 'frontend', desc: 'shpat_b37a... (activo)',    ok: true },
-                      { key: 'SHOPIFY_VARIANT_ID',     loc: 'frontend', desc: '…/44148658929752',          ok: true },
-                      { key: 'SHOPIFY_WEBHOOK_SECRET', loc: 'backend',  desc: 'Pendiente — webhooks',      ok: false },
-                      { key: 'MONGODB_URI',            loc: 'backend',  desc: 'localhost:27017',            ok: true },
+                      { key: 'SHOPIFY_STORE_DOMAIN',  loc: 'frontend', desc: 'tu-tienda.myshopify.com',  ok: true },
+                      { key: 'SHOPIFY_ADMIN_TOKEN',    loc: 'frontend', desc: 'shpat_••••••••••••••••',   ok: true },
+                      { key: 'SHOPIFY_VARIANT_ID',     loc: 'frontend', desc: 'gid://shopify/…',          ok: true },
+                      { key: 'SHOPIFY_WEBHOOK_SECRET', loc: 'backend',  desc: 'Configurar en producción', ok: false },
+                      { key: 'MONGODB_URI',            loc: 'backend',  desc: 'mongodb://…',              ok: true },
+                      { key: 'ADMIN_PASSWORD',         loc: 'backend',  desc: 'Contraseña del panel',     ok: true },
                     ].map(v => (
                       <div key={v.key} className="flex items-center gap-3 py-2.5 border-b border-[var(--line)]">
                         <span className="w-[5px] h-[5px] rounded-full shrink-0"
@@ -1023,21 +1108,26 @@ export default function AdminPage() {
 
                 <Card>
                   <CardTitle>Producto · Drop #1</CardTitle>
-                  <div className="flex flex-col gap-0">
-                    {[
-                      { label: 'Nombre',      value: 'Gorra Drop #1 — Cuscus Hats' },
-                      { label: 'Precio',      value: '$210.000 COP' },
-                      { label: 'Stock total', value: '100 unidades' },
-                      { label: 'Product ID',  value: '8788136034392' },
-                      { label: 'Variant ID',  value: '44148658929752' },
-                      { label: 'Lanzamiento', value: '2026 · Colombia' },
-                    ].map(r => (
-                      <div key={r.label} className="flex justify-between items-center py-2.5 border-b border-[var(--line)]">
-                        <span className="font-mono text-[8px] tracking-[0.24em] uppercase text-bone-3">{r.label}</span>
-                        <span className="font-mono text-[9px] text-bone">{r.value}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {product ? (
+                    <div className="flex flex-col gap-0">
+                      {[
+                        { label: 'Nombre',      value: product.productTitle },
+                        { label: 'Precio',      value: `$${parseFloat(product.price).toLocaleString('es-CO')} ${product.currencyCode}` },
+                        { label: 'Inventario',  value: `${product.inventory} / ${stats?.stockTotal ?? 100} uds` },
+                        { label: 'Estado',      value: product.status },
+                        { label: 'Lanzamiento', value: '2026 · Colombia' },
+                      ].map(r => (
+                        <div key={r.label} className="flex justify-between items-center py-2.5 border-b border-[var(--line)]">
+                          <span className="font-mono text-[8px] tracking-[0.24em] uppercase text-bone-3">{r.label}</span>
+                          <span className="font-mono text-[9px] text-bone">{r.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="font-mono text-[8px] tracking-[0.2em] text-bone-3 opacity-40 py-3">
+                      Carga el producto desde la sección Drop #1
+                    </p>
+                  )}
                 </Card>
 
                 <Card>
@@ -1045,8 +1135,8 @@ export default function AdminPage() {
                   <div className="flex flex-col gap-0">
                     {[
                       { label: 'Landing page',     href: '/',         ext: false },
-                      { label: 'Shopify Admin',    href: 'https://admin.shopify.com/store/gzqyqr-0k', ext: true },
-                      { label: 'Shopify Producto', href: 'https://admin.shopify.com/store/gzqyqr-0k/products/8788136034392', ext: true },
+                      { label: 'Shopify Admin',    href: 'https://admin.shopify.com', ext: true },
+                      { label: 'Shopify Producto', href: 'https://admin.shopify.com', ext: true },
                       { label: 'API Health',       href: `${API}/api/health`, ext: true },
                     ].map(l => (
                       <a key={l.label} href={l.href}

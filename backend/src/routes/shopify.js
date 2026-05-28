@@ -162,6 +162,7 @@ function mapFinancial(status) {
 function mapFulfillment(status) {
   if (!status || status === 'null') return 'unfulfilled';
   if (status === 'fulfilled') return 'dispatched';
+  if (status === 'partial')   return 'in_transit';
   return 'unfulfilled';
 }
 

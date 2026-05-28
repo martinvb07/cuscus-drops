@@ -1,11 +1,14 @@
-import { cache } from 'react';
+import { cache }          from 'react';
+import { unstable_cache } from 'next/cache';
 import { getProductDetails } from './shopify-admin';
 
-/**
- * Cached per-render — layout y page comparten el mismo fetch
- * sin hacer dos llamadas a Shopify.
- */
+const _fetchDropDetails = unstable_cache(
+  (variantId: string) => getProductDetails(variantId),
+  ['drop-details'],
+  { revalidate: 30 },
+);
+
 export const getDropDetails = cache(async () => {
   const variantId = process.env.SHOPIFY_VARIANT_ID || '';
-  return getProductDetails(variantId);
+  return _fetchDropDetails(variantId);
 });

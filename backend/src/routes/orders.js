@@ -11,9 +11,10 @@ const STOCK_TOTAL = Number(process.env.STOCK_TOTAL ?? 100);
 // GET /api/orders/stats  — Dashboard
 router.get('/stats', async (_req, res) => {
   try {
-    const [total, paid, dispatched, delivered, revenue] = await Promise.all([
+    const [total, paid, authorized, dispatched, delivered, revenue] = await Promise.all([
       Order.countDocuments(),
       Order.countDocuments({ financialStatus: 'paid' }),
+      Order.countDocuments({ financialStatus: 'authorized' }),
       Order.countDocuments({ fulfillmentStatus: 'dispatched' }),
       Order.countDocuments({ fulfillmentStatus: 'delivered' }),
       Order.aggregate([
@@ -25,10 +26,11 @@ router.get('/stats', async (_req, res) => {
     res.json({
       total,
       paid,
-      pending: total - paid,
+      authorized,
+      pending: total - paid - authorized,
       dispatched,
       delivered,
-      available: Math.max(0, STOCK_TOTAL - paid),
+      available: Math.max(0, STOCK_TOTAL - paid - authorized),
       stockTotal: STOCK_TOTAL,
       revenue: revenue[0]?.total ?? 0,
     });
@@ -98,7 +100,7 @@ router.get('/export.csv', async (_req, res) => {
         `"${o.customer?.lastName  || ''}"`,
         `"${o.customer?.email     || ''}"`,
         `"${o.customer?.phone     || ''}"`,
-        `"${sa.address1 || ''} ${sa.address2 || ''}".trim()`,
+        `"${(`${sa.address1 || ''} ${sa.address2 || ''}`).trim()}"`,
         `"${sa.city     || ''}"`,
         `"${sa.province || ''}"`,
         `"${sa.country  || ''}"`,

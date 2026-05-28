@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
-const POLL_INTERVAL = 30_000; // 30s
+const POLL_INTERVAL = 30_000;
 
 export function useStock(initial: number | null): number | null {
   const [available, setAvailable] = useState<number | null>(initial);
   const latestRef = useRef(initial);
+  const router    = useRouter();
 
   useEffect(() => {
     latestRef.current = initial;
@@ -24,13 +26,14 @@ export function useStock(initial: number | null): number | null {
         if (fresh !== null && fresh !== latestRef.current) {
           latestRef.current = fresh;
           setAvailable(fresh);
+          if (fresh <= 0) router.refresh();
         }
-      } catch { /* silent — don't surface network errors */ }
+      } catch { /* silent */ }
     }
 
     const id = setInterval(poll, POLL_INTERVAL);
     return () => { cancelled = true; clearInterval(id); };
-  }, []);
+  }, [router]);
 
   return available;
 }

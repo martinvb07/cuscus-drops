@@ -1,12 +1,21 @@
 import { Router } from 'express';
+import rateLimit  from 'express-rate-limit';
 import Analytics  from '../models/Analytics.js';
 import Order      from '../models/Order.js';
 import { requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
+const eventLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests' },
+});
+
 /* ── Public: track event (no auth — called from frontend) ─────────────────── */
-router.post('/event', async (req, res) => {
+router.post('/event', eventLimiter, async (req, res) => {
   try {
     const { event, data, sessionId } = req.body;
     const allowed = ['page_view', 'checkout_click', 'checkout_started'];

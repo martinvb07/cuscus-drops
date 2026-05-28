@@ -468,9 +468,9 @@ export default function AdminPage() {
             ))}
           </button>
 
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <span className="text-bone-3 opacity-30">{ICONS[section]}</span>
-            <span className="font-mono text-[8.5px] tracking-[0.38em] uppercase text-bone truncate">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
+            <span style={{ color: 'rgba(235,230,219,0.25)' }}>{ICONS[section]}</span>
+            <span className="font-bebas text-[16px] text-bone tracking-[0.06em] truncate leading-none">
               {NAV.find(n => n.id === section)?.label}
             </span>
           </div>
@@ -504,6 +504,22 @@ export default function AdminPage() {
             {/* ── DASHBOARD ────────────────────────────────────────────────── */}
             {section === 'dashboard' && (
               <div className="flex flex-col gap-6">
+                {/* Banner superior */}
+                <div className="flex items-end justify-between border-b border-[var(--line)] pb-4">
+                  <div>
+                    <p className="font-mono text-[7px] tracking-[0.45em] uppercase mb-1" style={{ color: 'rgba(235,230,219,0.3)' }}>
+                      {new Date().toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                    <h1 className="font-bebas text-[28px] text-bone leading-none tracking-[0.04em]">Overview · Drop #1</h1>
+                  </div>
+                  {stats && (
+                    <span className="font-mono text-[7.5px] tracking-[0.3em] uppercase hidden sm:block"
+                      style={{ color: 'rgba(235,230,219,0.25)' }}>
+                      {stats.total} órdenes totales
+                    </span>
+                  )}
+                </div>
+
                 {!stats ? (
                   <LoadingState label="Cargando métricas..." />
                 ) : (
@@ -1142,15 +1158,20 @@ export default function AdminPage() {
 
             <div className="px-5 sm:px-6 pb-6">
               {/* Header */}
-              <div className="flex items-start justify-between mb-5 pt-2">
+              <div className="flex items-start justify-between mb-4 pt-2 pb-4 border-b border-[var(--line)]">
                 <div>
-                  <p className="font-mono text-[7.5px] tracking-[0.45em] uppercase text-bone-3">Orden</p>
-                  <p className="font-bebas text-[32px] text-bone mt-0.5" style={{ letterSpacing: '0.02em' }}>
+                  <p className="font-mono text-[7px] tracking-[0.5em] uppercase mb-1" style={{ color: 'rgba(235,230,219,0.3)' }}>
+                    {new Date(selected.shopifyCreatedAt || selected.createdAt).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </p>
+                  <p className="font-bebas text-[36px] text-bone leading-none" style={{ letterSpacing: '0.03em' }}>
                     #{selected.shopifyOrderNumber}
+                  </p>
+                  <p className="font-mono text-[9px] text-bone-3 mt-1">
+                    {selected.customer.firstName} {selected.customer.lastName}
                   </p>
                 </div>
                 <button onClick={() => setSelected(null)}
-                  className="w-8 h-8 flex items-center justify-center border border-[var(--line)] text-bone-3 hover:text-bone hover:border-[var(--line-strong)] transition-colors">
+                  className="w-8 h-8 flex items-center justify-center border border-[var(--line)] text-bone-3 hover:text-bone hover:border-[var(--line-strong)] transition-all duration-150 shrink-0">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                     <path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                   </svg>
@@ -1242,9 +1263,14 @@ export default function AdminPage() {
                     />
                   </div>
                   <button onClick={save} disabled={saving}
-                    className="py-3 font-mono text-[9px] tracking-[0.38em] uppercase text-[var(--ink)] transition-all disabled:opacity-40"
-                    style={{ background: saving ? 'rgba(235,230,219,0.5)' : 'var(--bone)' }}>
-                    {saving ? 'Guardando...' : 'Guardar cambios'}
+                    className="py-3.5 font-mono text-[9px] tracking-[0.45em] uppercase transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                    style={{ background: saving ? 'rgba(235,230,219,0.5)' : 'var(--bone)', color: 'var(--ink)' }}>
+                    {saving ? (
+                      <>
+                        <span className="w-[4px] h-[4px] rounded-full animate-pulse" style={{ background: 'var(--ink)' }} />
+                        Guardando...
+                      </>
+                    ) : 'Guardar cambios'}
                   </button>
                 </div>
               </DrawerSection>
@@ -1260,10 +1286,12 @@ export default function AdminPage() {
 
 function MetricCard({ label, value, color, sub, small }: { label: string; value: string | number; color: string; sub?: string; small?: boolean }) {
   return (
-    <div className="border border-[var(--line)] p-4 flex flex-col gap-1.5 transition-colors hover:border-[var(--line-strong)]"
-      style={{ background: 'rgba(235,230,219,0.02)' }}>
-      <span className="font-mono text-[7px] tracking-[0.32em] uppercase text-bone-3">{label}</span>
-      <span className="font-bebas leading-none" style={{ fontSize: small ? '24px' : '32px', color, letterSpacing: '0.02em' }}>
+    <div className="border border-[var(--line)] p-4 flex flex-col gap-1.5 transition-all duration-200 hover:border-[var(--line-strong)] hover:bg-[rgba(235,230,219,0.04)] group relative overflow-hidden"
+      style={{ background: 'rgba(235,230,219,0.02)', borderTop: `2px solid ${color}30` }}>
+      <div className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-300"
+        style={{ background: `linear-gradient(90deg, ${color}60, transparent)`, opacity: 0 }} />
+      <span className="font-mono text-[7px] tracking-[0.32em] uppercase text-bone-3 group-hover:text-bone-2 transition-colors">{label}</span>
+      <span className="font-bebas leading-none" style={{ fontSize: small ? '24px' : '36px', color, letterSpacing: '0.02em' }}>
         {value}
       </span>
       {sub && <span className="font-mono text-[6.5px] tracking-[0.2em] uppercase text-bone-3 opacity-40">{sub}</span>}
@@ -1273,8 +1301,8 @@ function MetricCard({ label, value, color, sub, small }: { label: string; value:
 
 function Card({ children, compact }: { children: React.ReactNode; compact?: boolean }) {
   return (
-    <div className={`border border-[var(--line)] flex flex-col gap-3 ${compact ? 'p-3.5' : 'p-4 sm:p-5'}`}
-      style={{ background: 'rgba(235,230,219,0.02)' }}>
+    <div className={`border border-[var(--line)] flex flex-col gap-3 ${compact ? 'p-3.5' : 'p-4 sm:p-5'} hover:border-[rgba(235,230,219,0.12)] transition-colors duration-200`}
+      style={{ background: 'rgba(235,230,219,0.025)' }}>
       {children}
     </div>
   );
@@ -1282,7 +1310,9 @@ function Card({ children, compact }: { children: React.ReactNode; compact?: bool
 
 function CardTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="font-mono text-[7.5px] tracking-[0.4em] uppercase text-bone-3 pb-2.5 border-b border-[var(--line)]">
+    <h3 className="font-mono text-[7px] tracking-[0.45em] uppercase pb-3 border-b border-[var(--line)] flex items-center gap-2"
+      style={{ color: 'rgba(235,230,219,0.35)' }}>
+      <span className="w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'rgba(235,230,219,0.25)' }} />
       {children}
     </h3>
   );
@@ -1290,19 +1320,22 @@ function CardTitle({ children }: { children: React.ReactNode }) {
 
 function SectionHeader({ label, children }: { label: string; children?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 mb-1">
-      <h2 className="font-mono text-[8px] tracking-[0.4em] uppercase text-bone-3">{label}</h2>
-      {children}
+    <div className="flex items-center justify-between gap-3 pb-4 border-b border-[var(--line)] mb-1">
+      <h2 className="font-bebas text-[20px] text-bone tracking-[0.06em] leading-none">{label}</h2>
+      <div className="flex items-center gap-2">{children}</div>
     </div>
   );
 }
 
 function DrawerSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-4">
-      <h4 className="font-mono text-[7.5px] tracking-[0.4em] uppercase text-bone-3 pb-2 border-b border-[var(--line)] mb-3">
-        {title}
-      </h4>
+    <div className="mb-5">
+      <div className="flex items-center gap-2 pb-2.5 border-b border-[var(--line)] mb-3">
+        <span className="w-[3px] h-[3px] rounded-full shrink-0" style={{ background: 'rgba(235,230,219,0.2)' }} />
+        <h4 className="font-mono text-[7px] tracking-[0.4em] uppercase" style={{ color: 'rgba(235,230,219,0.35)' }}>
+          {title}
+        </h4>
+      </div>
       {children}
     </div>
   );
@@ -1319,23 +1352,29 @@ function DrawerField({ label, children }: { label: string; children: React.React
 
 function LoadingState({ label, inline }: { label: string; inline?: boolean }) {
   return (
-    <div className={`flex items-center gap-3 ${inline ? '' : 'py-10 justify-center'}`}>
-      <div className="flex gap-[3px]">
+    <div className={`flex items-center gap-3 ${inline ? '' : 'py-14 justify-center'}`}>
+      <div className="flex gap-[4px]">
         {[0,1,2].map(i => (
-          <span key={i} className="w-[3px] h-[3px] rounded-full bg-bone-3"
-            style={{ animation: `pulse 1s ease-in-out ${i * 0.2}s infinite` }} />
+          <span key={i} className="w-[4px] h-[4px] rounded-full"
+            style={{ background: 'var(--gold)', opacity: 0.4, animation: `pulse 1.2s ease-in-out ${i * 0.25}s infinite` }} />
         ))}
       </div>
-      <span className="font-mono text-[8.5px] tracking-[0.28em] uppercase text-bone-3 opacity-50">{label}</span>
+      <span className="font-mono text-[8px] tracking-[0.35em] uppercase text-bone-3 opacity-40">{label}</span>
     </div>
   );
 }
 
 function EmptyState({ label }: { label: string }) {
   return (
-    <div className="flex flex-col items-center gap-3 py-16 opacity-30">
-      <div className="eyelet-row"><div className="eyelet"/><div className="eyelet"/><div className="eyelet"/></div>
-      <span className="font-mono text-[8.5px] tracking-[0.4em] uppercase text-bone-3">{label}</span>
+    <div className="flex flex-col items-center gap-4 py-20 border border-[var(--line)]"
+      style={{ background: 'rgba(235,230,219,0.01)' }}>
+      <div className="w-12 h-12 border border-[var(--line)] flex items-center justify-center opacity-20">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="3" width="14" height="14" stroke="currentColor" strokeWidth="1" className="text-bone-3"/>
+          <path d="M7 10h6M10 7v6" stroke="currentColor" strokeWidth="1" strokeLinecap="round" className="text-bone-3"/>
+        </svg>
+      </div>
+      <span className="font-mono text-[8px] tracking-[0.45em] uppercase text-bone-3 opacity-30">{label}</span>
     </div>
   );
 }
@@ -1378,34 +1417,40 @@ function OrdersTable({ orders, onOpen, compact = false }: { orders: Order[]; onO
       <div className="hidden sm:block overflow-x-auto border border-[var(--line)]">
         <table className="w-full admin-table border-collapse">
           <thead>
-            <tr className="border-b border-[var(--line)]" style={{ background: 'rgba(235,230,219,0.03)' }}>
+            <tr className="border-b border-[var(--line)]" style={{ background: 'rgba(235,230,219,0.04)' }}>
               {(compact
                 ? ['#', 'Cliente', 'Ciudad', 'Pago', 'Despacho', 'Total']
                 : ['#', 'Cliente', 'Contacto', 'Ciudad', 'Pago', 'Despacho', 'Guía', 'Total', 'Fecha', '']
               ).map(h => (
-                <th key={h} className="px-4 py-3 font-mono text-[7.5px] tracking-[0.3em] uppercase text-bone-3 whitespace-nowrap">{h}</th>
+                <th key={h} className="px-4 py-3.5 font-mono text-[7px] tracking-[0.35em] uppercase whitespace-nowrap text-left"
+                  style={{ color: 'rgba(235,230,219,0.35)' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {orders.map(o => (
+            {orders.map((o, idx) => (
               <tr key={o._id} onClick={() => onOpen(o)}
-                className="border-b border-[var(--line)] cursor-pointer hover:bg-[rgba(235,230,219,0.03)] transition-colors">
-                <td className="px-4 py-3 font-mono text-[9px] text-bone-3">#{o.shopifyOrderNumber}</td>
-                <td className="px-4 py-3 font-mono text-[10px] text-bone whitespace-nowrap">{o.customer.firstName} {o.customer.lastName}</td>
+                className="border-b border-[var(--line)] cursor-pointer transition-all duration-150 group"
+                style={{ background: idx % 2 === 0 ? 'transparent' : 'rgba(235,230,219,0.01)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(235,230,219,0.04)')}
+                onMouseLeave={e => (e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(235,230,219,0.01)')}>
+                <td className="px-4 py-3.5 font-mono text-[9px] text-bone-3 whitespace-nowrap">
+                  <span style={{ color: 'rgba(235,230,219,0.25)' }}>#</span>{o.shopifyOrderNumber}
+                </td>
+                <td className="px-4 py-3.5 font-mono text-[10px] text-bone whitespace-nowrap font-medium">{o.customer.firstName} {o.customer.lastName}</td>
                 {!compact && (
-                  <td className="px-4 py-3 font-mono text-[9px] text-bone-3 whitespace-nowrap">
-                    <div>{o.customer.email}</div>
-                    <div className="opacity-60">{o.customer.phone}</div>
+                  <td className="px-4 py-3.5 font-mono text-[9px] whitespace-nowrap">
+                    <div style={{ color: 'rgba(235,230,219,0.6)' }}>{o.customer.email}</div>
+                    <div style={{ color: 'rgba(235,230,219,0.35)' }}>{o.customer.phone}</div>
                   </td>
                 )}
-                <td className="px-4 py-3 font-mono text-[9px] text-bone-3 whitespace-nowrap">{o.shippingAddress?.city}</td>
-                <td className="px-4 py-3"><span className={`badge ${FIN_CLS[o.financialStatus]}`}>{FIN_LABEL[o.financialStatus]}</span></td>
-                <td className="px-4 py-3"><span className={`badge ${FUL_CLS[o.fulfillmentStatus]}`}>{FUL_LABEL[o.fulfillmentStatus]}</span></td>
-                {!compact && <td className="px-4 py-3 font-mono text-[9px] text-bone-3">{o.trackingNumber || <Dash/>}</td>}
-                <td className="px-4 py-3 font-mono text-[10px] text-bone whitespace-nowrap">${parseFloat(o.totalPrice || '0').toLocaleString('es-CO')} {o.currency}</td>
-                {!compact && <td className="px-4 py-3 font-mono text-[9px] text-bone-3 whitespace-nowrap">{new Date(o.shopifyCreatedAt || o.createdAt).toLocaleDateString('es-CO')}</td>}
-                {!compact && <td className="px-4 py-3 font-mono text-[11px] text-bone-3 opacity-30">→</td>}
+                <td className="px-4 py-3.5 font-mono text-[9px] text-bone-3 whitespace-nowrap">{o.shippingAddress?.city}</td>
+                <td className="px-4 py-3.5"><span className={`badge ${FIN_CLS[o.financialStatus]}`}>{FIN_LABEL[o.financialStatus]}</span></td>
+                <td className="px-4 py-3.5"><span className={`badge ${FUL_CLS[o.fulfillmentStatus]}`}>{FUL_LABEL[o.fulfillmentStatus]}</span></td>
+                {!compact && <td className="px-4 py-3.5 font-mono text-[9px] text-bone-3">{o.trackingNumber || <Dash/>}</td>}
+                <td className="px-4 py-3.5 font-mono text-[10px] text-bone whitespace-nowrap">${parseFloat(o.totalPrice || '0').toLocaleString('es-CO')} <span style={{ color: 'rgba(235,230,219,0.3)' }}>{o.currency}</span></td>
+                {!compact && <td className="px-4 py-3.5 font-mono text-[9px] text-bone-3 whitespace-nowrap">{new Date(o.shopifyCreatedAt || o.createdAt).toLocaleDateString('es-CO')}</td>}
+                {!compact && <td className="px-4 py-3.5 font-mono text-[11px] opacity-20 group-hover:opacity-60 transition-opacity">→</td>}
               </tr>
             ))}
           </tbody>

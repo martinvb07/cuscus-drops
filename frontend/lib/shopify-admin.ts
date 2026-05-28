@@ -26,8 +26,9 @@ async function adminGql<T>(
         'Content-Type':             'application/json',
         'X-Shopify-Access-Token':   TOKEN!,
       },
-      body:  JSON.stringify({ query, variables }),
-      cache: 'no-store',
+      body:   JSON.stringify({ query, variables }),
+      cache:  'no-store',
+      signal: AbortSignal.timeout(10_000),
     },
   );
 

@@ -6,7 +6,7 @@ import { createShopifyFulfillment, cancelShopifyOrder } from '../services/shopif
 const router = Router();
 router.use(requireAdmin);
 
-const STOCK_TOTAL = 100;
+const STOCK_TOTAL = Number(process.env.STOCK_TOTAL ?? 100);
 
 // GET /api/orders/stats  — Dashboard
 router.get('/stats', async (_req, res) => {

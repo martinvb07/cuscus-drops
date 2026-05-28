@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createCheckout } from '@/lib/shopify';
+import { createCheckout, getStock } from '@/lib/shopify';
 
 const API = process.env.BACKEND_URL || 'http://localhost:4001';
 
@@ -19,6 +19,10 @@ export async function POST() {
     const variantId = process.env.SHOPIFY_VARIANT_ID;
     if (!variantId) {
       return NextResponse.json({ error: 'Shopify no configurado. Agrega las credenciales en .env.local' }, { status: 503 });
+    }
+    const stock = await getStock(variantId);
+    if (stock !== null && stock <= 0) {
+      return NextResponse.json({ error: 'Sin stock disponible' }, { status: 409 });
     }
     const checkoutUrl = await createCheckout(variantId, 1);
     await trackEvent('checkout_started', { variantId });

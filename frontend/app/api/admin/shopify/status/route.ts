@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     connected,
     stats:     statsVal,
     inventory: inventoryVal,
-    stockTotal: 100,
+    stockTotal: Number(process.env.STOCK_TOTAL ?? 100),
     timestamp: new Date().toISOString(),
     error: !connected
       ? (stats.status === 'rejected' ? String((stats as PromiseRejectedResult).reason) : 'Not configured')

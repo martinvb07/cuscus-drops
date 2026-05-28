@@ -35,4 +35,7 @@ app.listen(PORT, () => {
 
 connectDB()
   .then(() => console.log('✅ MongoDB conectado'))
-  .catch(err => console.warn(`⚠️  MongoDB no disponible (${err.message}) — continuando sin DB`));
+  .catch(err => {
+    console.error(`❌ MongoDB no disponible: ${err.message}`);
+    process.exit(1);
+  });

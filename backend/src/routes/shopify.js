@@ -4,7 +4,7 @@ import Order      from '../models/Order.js';
 
 const router = Router();
 
-const STOCK_TOTAL = 100;
+const STOCK_TOTAL = Number(process.env.STOCK_TOTAL ?? 100);
 
 // Verificar firma HMAC de Shopify
 function verifyHmac(rawBody, hmacHeader) {
@@ -28,8 +28,13 @@ router.post('/webhook', async (req, res) => {
 
   const data = req.body;
 
+  if (!data || typeof data !== 'object') {
+    return res.status(400).send('Bad Request');
+  }
+
   try {
     if (topic === 'orders/create' || topic === 'orders/paid') {
+      if (!data.id) return res.status(400).send('Missing order id');
       await upsertOrder(data);
     } else if (topic === 'orders/updated') {
       await updateOrderStatus(data);

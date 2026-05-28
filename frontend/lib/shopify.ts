@@ -11,7 +11,7 @@ async function adminRest(path: string) {
   try {
     const res = await fetch(
       `https://${DOMAIN}/admin/api/${API_VER}${path}`,
-      { headers: { 'X-Shopify-Access-Token': ADMIN_TOKEN }, cache: 'no-store' },
+      { headers: { 'X-Shopify-Access-Token': ADMIN_TOKEN }, cache: 'no-store', signal: AbortSignal.timeout(10_000) },
     );
     if (!res.ok) return null;
     return res.json();

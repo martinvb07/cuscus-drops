@@ -5,6 +5,8 @@ import { connectDB } from './db/connection.js';
 import ordersRouter    from './routes/orders.js';
 import shopifyRouter   from './routes/shopify.js';
 import analyticsRouter from './routes/analytics.js';
+import syncRouter      from './routes/sync.js';
+import { registerWebhooks } from './services/shopifyWebhooks.js';
 
 dotenv.config();
 
@@ -28,13 +30,17 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'cuscus-
 app.use('/api/orders',    ordersRouter);
 app.use('/api/shopify',   shopifyRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/sync',      syncRouter);
 
 app.listen(PORT, () => {
   console.log(`🎩 Cuscus Hats backend → http://localhost:${PORT}`);
 });
 
 connectDB()
-  .then(() => console.log('✅ MongoDB conectado'))
+  .then(() => {
+    console.log('✅ MongoDB conectado');
+    registerWebhooks();
+  })
   .catch(err => {
     console.error(`❌ MongoDB no disponible: ${err.message}`);
     process.exit(1);

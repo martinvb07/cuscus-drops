@@ -4,6 +4,7 @@ import Ticker           from '@/components/Ticker';
 import EditorialSection from '@/components/EditorialSection';
 import Footer           from '@/components/Footer';
 import SoldOut          from '@/components/SoldOut';
+import PageViewTracker  from '@/components/PageViewTracker';
 import { getDropDetails } from '@/lib/drop-cache';
 
 function formatPrice(amount: string, currencyCode: string): { price: string; currency: string } {
@@ -37,6 +38,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <PageViewTracker />
       <HeroSection />
       <DropSection available={available} price={price} currency={currency} />
       <Ticker />

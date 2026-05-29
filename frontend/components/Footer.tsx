@@ -51,11 +51,11 @@ export default function Footer() {
         </div>
 
         {/* ── Bottom row ───────────────────────────────────────────────────── */}
-        <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+        <div className="pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
           <span className="font-mono text-[8px] tracking-[0.22em] text-bone-3 uppercase">
             &copy; 2026 Cuscus Hats &nbsp;·&nbsp; Drop #1 &nbsp;·&nbsp; 100 gorras
           </span>
-          <span className="font-bebas text-bone uppercase"
+          <span className="font-bebas text-bone uppercase hidden sm:block"
             style={{ fontSize: 'clamp(20px, 2.2vw, 28px)', letterSpacing: '0.10em', opacity: 0.55 }}>
             Made to Shine &nbsp;·&nbsp; Edición Limitada
           </span>

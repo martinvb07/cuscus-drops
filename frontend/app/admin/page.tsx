@@ -3,8 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 
-const API  = process.env.NEXT_PUBLIC_API_URL        || 'http://localhost:4001';
-const PASS = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || '';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
 type FinancialStatus   = 'pending' | 'authorized' | 'paid' | 'partially_refunded' | 'refunded' | 'voided';
 type FulfillmentStatus = 'unfulfilled' | 'in_transit' | 'dispatched' | 'delivered' | 'cancelled';
@@ -55,7 +54,7 @@ const FUL_LABEL: Record<FulfillmentStatus, string> = { unfulfilled: 'Sin despach
 const FIN_CLS:   Record<FinancialStatus, string>   = { pending: 'badge-pending', authorized: 'badge-pending', paid: 'badge-paid', partially_refunded: 'badge-refunded', refunded: 'badge-refunded', voided: 'badge-refunded' };
 const FUL_CLS:   Record<FulfillmentStatus, string> = { unfulfilled: 'badge-unfulfilled', in_transit: 'badge-in_transit', dispatched: 'badge-dispatched', delivered: 'badge-delivered', cancelled: 'badge-refunded' };
 
-function hdrs() { return { 'Content-Type': 'application/json', 'x-admin-token': PASS }; }
+function hdrs(token: string) { return { 'Content-Type': 'application/json', 'x-admin-token': token }; }
 
 type Section = 'dashboard' | 'drops' | 'pedidos' | 'inventario' | 'clientes' | 'analiticas' | 'shopify' | 'config';
 
@@ -86,7 +85,9 @@ const NAV: { id: Section; label: string; live?: true }[] = [
 export default function AdminPage() {
   const [authed,      setAuthed]      = useState(false);
   const [password,    setPassword]    = useState('');
+  const [token,       setToken]       = useState('');
   const [loginError,  setLoginError]  = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
   const [section,     setSection]     = useState<Section>('dashboard');
   const [sideOpen,    setSideOpen]    = useState(false);
   const [stats,       setStats]       = useState<Stats | null>(null);
@@ -116,13 +117,16 @@ export default function AdminPage() {
   const [priceInput,       setPriceInput]       = useState('');
   const [confirmToggle,    setConfirmToggle]    = useState(false);
   const [saveMsg,          setSaveMsg]          = useState('');
+  const [syncing,          setSyncing]          = useState(false);
+  const [syncResult,       setSyncResult]       = useState<{ synced: number; total: number; errors: number } | null>(null);
+  const [lastUpdated,      setLastUpdated]      = useState<Date | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   async function loadProduct() {
     setProductLoading(true); setProductError('');
     try {
-      const res = await fetch('/api/admin/shopify/product', { headers: hdrs() });
+      const res = await fetch('/api/admin/shopify/product', { headers: hdrs(token) });
       if (res.ok) { const d: ProductDetails = await res.json(); setProduct(d); setPriceInput(d.price); }
       else { const d = await res.json(); setProductError(d.error || 'Error al cargar producto'); }
     } finally { setProductLoading(false); }
@@ -137,7 +141,7 @@ export default function AdminPage() {
     if (!product || !priceInput) return;
     setProductSaving(true); setProductError('');
     try {
-      const res = await fetch('/api/admin/shopify/product', { method: 'PATCH', headers: { ...hdrs() }, body: JSON.stringify({ price: priceInput }) });
+      const res = await fetch('/api/admin/shopify/product', { method: 'PATCH', headers: { ...hdrs(token) }, body: JSON.stringify({ price: priceInput }) });
       const d = await res.json();
       if (!res.ok) { setProductError(d.error || 'Error al guardar'); return; }
       setProduct(p => p ? { ...p, price: d.price ?? priceInput } : p);
@@ -150,7 +154,7 @@ export default function AdminPage() {
     const newStatus = product.status === 'ACTIVE' ? 'DRAFT' : 'ACTIVE';
     setProductSaving(true); setProductError('');
     try {
-      const res = await fetch('/api/admin/shopify/product', { method: 'PATCH', headers: { ...hdrs() }, body: JSON.stringify({ status: newStatus, productId: product.productId }) });
+      const res = await fetch('/api/admin/shopify/product', { method: 'PATCH', headers: { ...hdrs(token) }, body: JSON.stringify({ status: newStatus, productId: product.productId }) });
       const d = await res.json();
       if (!res.ok) { setProductError(d.error || 'Error al cambiar estado'); return; }
       setProduct(p => p ? { ...p, status: newStatus } : p);
@@ -161,7 +165,7 @@ export default function AdminPage() {
   async function loadShopifyLive() {
     setShopifyLoading(true);
     try {
-      const res = await fetch('/api/admin/shopify/status', { headers: { 'x-admin-token': PASS } });
+      const res = await fetch('/api/admin/shopify/status', { headers: { 'x-admin-token': token } });
       if (res.ok) setShopifyLive(await res.json());
     } finally { setShopifyLoading(false); }
   }
@@ -169,7 +173,7 @@ export default function AdminPage() {
   async function loadCustomers() {
     setCustomersLoading(true);
     try {
-      const res = await fetch(`${API}/api/orders/customers`, { headers: hdrs() });
+      const res = await fetch(`${API}/api/orders/customers`, { headers: hdrs(token) });
       if (res.ok) setCustomers(await res.json());
     } finally { setCustomersLoading(false); }
   }
@@ -182,7 +186,7 @@ export default function AdminPage() {
   async function loadAnalytics() {
     setAnalyticsLoading(true);
     try {
-      const res = await fetch(`${API}/api/analytics/summary`, { headers: hdrs() });
+      const res = await fetch(`${API}/api/analytics/summary`, { headers: hdrs(token) });
       if (res.ok) setAnalytics(await res.json());
     } finally { setAnalyticsLoading(false); }
   }
@@ -193,24 +197,26 @@ export default function AdminPage() {
     if (financial)   params.set('financial',   financial);
     if (fulfillment) params.set('fulfillment', fulfillment);
     const [sRes, oRes] = await Promise.all([
-      fetch(`${API}/api/orders/stats`,     { headers: hdrs() }),
-      fetch(`${API}/api/orders?${params}`, { headers: hdrs() }),
+      fetch(`${API}/api/orders/stats`,     { headers: hdrs(token) }),
+      fetch(`${API}/api/orders?${params}`, { headers: hdrs(token) }),
     ]);
     if (!sRes.ok || !oRes.ok) return;
     setStats(await sRes.json());
     const d = await oRes.json();
     setOrders(d.orders); setTotal(d.total);
+    setLastUpdated(new Date());
   }, [page, search, financial, fulfillment]);
 
   useEffect(() => { if (authed) load(); }, [authed, load]);
 
-  // Auto-refresh stats cada 60s mientras dashboard está activo
+  // Auto-refresh cada 30s en dashboard y pedidos
   useEffect(() => {
-    if (!authed || section !== 'dashboard') {
+    const active = authed && (section === 'dashboard' || section === 'pedidos');
+    if (!active) {
       if (refreshRef.current) { clearInterval(refreshRef.current); refreshRef.current = null; }
       return;
     }
-    refreshRef.current = setInterval(() => load(), 60_000);
+    refreshRef.current = setInterval(() => load(), 30_000);
     return () => { if (refreshRef.current) clearInterval(refreshRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authed, section]);
@@ -234,9 +240,43 @@ export default function AdminPage() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  function login() {
-    if (password === PASS) { setAuthed(true); setLoginError(false); }
-    else { setLoginError(true); setTimeout(() => setLoginError(false), 1200); }
+  async function syncOrders() {
+    setSyncing(true); setSyncResult(null);
+    try {
+      const res = await fetch(`${API}/api/sync/orders`, { method: 'POST', headers: hdrs(token) });
+      if (res.ok) {
+        const d = await res.json();
+        setSyncResult(d);
+        load();
+      }
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  async function login() {
+    if (!password) return;
+    setLoginLoading(true);
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        setToken(password);
+        setAuthed(true);
+        setLoginError(false);
+      } else {
+        setLoginError(true);
+        setTimeout(() => setLoginError(false), 1200);
+      }
+    } catch {
+      setLoginError(true);
+      setTimeout(() => setLoginError(false), 1200);
+    } finally {
+      setLoginLoading(false);
+    }
   }
 
   function openOrder(o: Order) {
@@ -244,13 +284,28 @@ export default function AdminPage() {
     setPatch({ fulfillmentStatus: o.fulfillmentStatus, trackingNumber: o.trackingNumber || '', trackingCompany: o.trackingCompany || '', trackingUrl: o.trackingUrl || '', adminNotes: o.adminNotes || '' });
   }
 
+  const [saveError, setSaveError] = useState('');
+
   async function save() {
     if (!selected) return;
-    setSaving(true);
-    const body: Record<string, string> = {};
-    Object.entries(patch).forEach(([k, v]) => { if (v !== undefined) body[k] = v; });
-    await fetch(`${API}/api/orders/${selected._id}`, { method: 'PATCH', headers: hdrs(), body: JSON.stringify(body) });
-    setSaving(false); setSelected(null); load();
+    setSaving(true); setSaveError('');
+    try {
+      const body: Record<string, string> = {};
+      Object.entries(patch).forEach(([k, v]) => { if (v !== undefined) body[k] = v; });
+      const res = await fetch(`${API}/api/orders/${selected._id}`, {
+        method: 'PATCH', headers: hdrs(token), body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        setSaveError(d.error || `Error ${res.status}`);
+        return;
+      }
+      setSelected(null); load();
+    } catch {
+      setSaveError('Error de conexión al guardar');
+    } finally {
+      setSaving(false);
+    }
   }
 
   /* ── LOGIN ───────────────────────────────────────────────────────────────── */
@@ -328,7 +383,7 @@ export default function AdminPage() {
                   placeholder="••••••••••"
                   value={password}
                   onChange={e => { setPassword(e.target.value); setLoginError(false); }}
-                  onKeyDown={e => e.key === 'Enter' && login()}
+                  onKeyDown={e => e.key === 'Enter' && !loginLoading && login()}
                   autoFocus
                   className="w-full px-4 py-3.5 font-mono text-[13px] text-bone placeholder:text-bone-3 outline-none transition-all duration-200"
                   style={{
@@ -347,11 +402,12 @@ export default function AdminPage() {
 
               <button
                 onClick={login}
-                className="relative overflow-hidden py-3.5 font-mono text-[9px] tracking-[0.45em] uppercase text-[var(--ink)] transition-all duration-200 group"
+                disabled={loginLoading}
+                className="relative overflow-hidden py-3.5 font-mono text-[9px] tracking-[0.45em] uppercase text-[var(--ink)] transition-all duration-200 group disabled:opacity-60"
                 style={{ background: 'var(--bone)' }}
               >
                 <span className="relative z-10 group-hover:opacity-80 transition-opacity">
-                  Entrar al panel
+                  {loginLoading ? 'Verificando...' : 'Entrar al panel'}
                 </span>
                 <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{ background: 'linear-gradient(135deg, var(--bone), var(--bone-2))' }} />
@@ -505,13 +561,28 @@ export default function AdminPage() {
                 </span>
               </div>
             )}
-            <a href={`${API}/api/orders/export.csv`} download
+            {lastUpdated && (section === 'dashboard' || section === 'pedidos') && (
+              <span className="hidden md:block font-mono text-[7px] tracking-[0.2em] uppercase"
+                style={{ color: 'rgba(235,230,219,0.2)' }}>
+                ↻ {lastUpdated.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </span>
+            )}
+            <button
+              onClick={async () => {
+                const res = await fetch(`${API}/api/orders/export.csv`, { headers: hdrs(token) });
+                if (!res.ok) return;
+                const blob = await res.blob();
+                const url  = URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                a.href = url; a.download = 'ordenes-cuscus.csv'; a.click();
+                URL.revokeObjectURL(url);
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 border border-[var(--line)] font-mono text-[7.5px] tracking-[0.24em] uppercase text-bone-3 hover:text-bone hover:border-[var(--line-strong)] transition-colors">
               <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
                 <path d="M4.5 1v5M2 5l2.5 3 2.5-3M1 8h7" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
               </svg>
               <span className="hidden sm:inline">Exportar</span>
-            </a>
+            </button>
           </div>
         </header>
 
@@ -979,9 +1050,28 @@ export default function AdminPage() {
               <div className="flex flex-col gap-4 max-w-[640px]">
                 <SectionHeader label="Shopify · Conexión en vivo">
                   <button onClick={loadShopifyLive} disabled={shopifyLoading} className="btn-secondary">
-                    {shopifyLoading ? 'Actualizando...' : 'Sincronizar'}
+                    {shopifyLoading ? 'Actualizando...' : 'Actualizar'}
+                  </button>
+                  <button
+                    onClick={syncOrders}
+                    disabled={syncing}
+                    className="px-4 py-1.5 font-mono text-[8px] tracking-[0.28em] uppercase transition-all disabled:opacity-40"
+                    style={{ background: 'rgba(62,207,142,0.12)', border: '1px solid rgba(62,207,142,0.3)', color: '#3ecf8e' }}>
+                    {syncing ? 'Importando...' : '↓ Importar órdenes'}
                   </button>
                 </SectionHeader>
+
+                {syncResult && (
+                  <div className="px-4 py-3 border flex items-center gap-3"
+                    style={{ borderColor: 'rgba(62,207,142,0.25)', background: 'rgba(62,207,142,0.05)' }}>
+                    <span className="w-[5px] h-[5px] rounded-full shrink-0" style={{ background: '#3ecf8e' }} />
+                    <span className="font-mono text-[8.5px] tracking-[0.14em]" style={{ color: '#3ecf8e' }}>
+                      {syncResult.synced} órdenes importadas de Shopify
+                      {syncResult.errors > 0 && ` · ${syncResult.errors} errores`}
+                    </span>
+                    <button onClick={() => setSyncResult(null)} className="ml-auto text-bone-3 opacity-40 hover:opacity-80">✕</button>
+                  </div>
+                )}
 
                 <Card>
                   <CardTitle>Estado de conexión · Admin API</CardTitle>
@@ -1032,19 +1122,37 @@ export default function AdminPage() {
                 </Card>
 
                 <Card>
-                  <CardTitle>Webhook URL · Sincronización</CardTitle>
-                  <div className="flex gap-2">
+                  <CardTitle>Webhook · Sincronización automática</CardTitle>
+                  <p className="font-mono text-[8px] tracking-[0.14em] leading-relaxed text-bone-3">
+                    Shopify enviará cada orden aquí automáticamente una vez el backend esté en producción.
+                  </p>
+                  <div className="flex gap-2 mt-1">
                     <code className="flex-1 min-w-0 bg-[rgba(235,230,219,0.04)] border border-[var(--line)] px-3 py-2 font-mono text-[9px] text-bone truncate">
-                      {API}/api/shopify/webhook
+                      https://api.cuscushats.com/api/shopify/webhook
                     </code>
-                    <button onClick={() => navigator.clipboard.writeText(`${API}/api/shopify/webhook`)}
+                    <button onClick={() => navigator.clipboard.writeText('https://api.cuscushats.com/api/shopify/webhook')}
                       className="btn-secondary px-3 shrink-0">
                       Copiar
                     </button>
                   </div>
-                  <p className="font-mono text-[7.5px] tracking-[0.14em] text-bone-3 mt-2 opacity-40">
-                    En producción usa la URL pública del backend.
-                  </p>
+                  <div className="mt-3 pt-3 border-t border-[var(--line)]">
+                    <p className="font-mono text-[7px] tracking-[0.32em] uppercase text-bone-3 mb-2 opacity-60">
+                      Pasos en Shopify Admin → Settings → Notifications → Webhooks
+                    </p>
+                    <div className="flex flex-col gap-1">
+                      {[
+                        'orders/create → pegar URL de arriba',
+                        'orders/paid   → pegar URL de arriba',
+                        'orders/updated → pegar URL de arriba',
+                        'Copiar "Signing secret" → backend .env SHOPIFY_WEBHOOK_SECRET',
+                      ].map((step, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <span className="font-mono text-[7px] text-bone-3 opacity-40 shrink-0 mt-0.5">{i + 1}.</span>
+                          <span className="font-mono text-[8px] text-bone-3">{step}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   <div className="mt-3 flex flex-wrap gap-1.5">
                     {['orders/create','orders/paid','orders/updated','inventory_levels/update','fulfillments/create'].map(t => (
                       <span key={t} className="font-mono text-[7px] tracking-[0.12em] px-2 py-1 border border-[var(--line)] text-bone-3">{t}</span>
@@ -1352,6 +1460,12 @@ export default function AdminPage() {
                       className="bg-transparent border border-[var(--line)] px-3 py-2.5 font-mono text-[10px] text-bone placeholder:text-bone-3 outline-none focus:border-[var(--line-strong)] resize-none transition-colors"
                     />
                   </div>
+                  {saveError && (
+                    <p className="font-mono text-[8px] tracking-[0.18em] text-center"
+                      style={{ color: 'rgba(224,92,92,0.85)' }}>
+                      {saveError}
+                    </p>
+                  )}
                   <button onClick={save} disabled={saving}
                     className="py-3.5 font-mono text-[9px] tracking-[0.45em] uppercase transition-all disabled:opacity-40 flex items-center justify-center gap-2"
                     style={{ background: saving ? 'rgba(235,230,219,0.5)' : 'var(--bone)', color: 'var(--ink)' }}>

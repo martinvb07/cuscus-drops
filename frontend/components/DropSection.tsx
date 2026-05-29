@@ -35,12 +35,12 @@ export default function DropSection({ available: initialAvailable, price, curren
   return (
     <section
       id="drop"
-      className="relative w-full border-t border-[var(--line)] py-24 sm:py-32 lg:py-40 px-6 sm:px-10 lg:px-16"
+      className="relative w-full border-t border-[var(--line)] py-12 sm:py-24 lg:py-36 px-5 sm:px-10 lg:px-16"
       style={{ background: 'radial-gradient(ellipse 60% 65% at 25% 50%, rgba(235,230,219,0.020) 0%, transparent 65%)' }}
     >
 
       {/* ── Header ────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1240px] mx-auto mb-16 sm:mb-20">
+      <div className="max-w-[1240px] mx-auto mb-7 sm:mb-14">
         <motion.div
           className="flex items-center justify-between"
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
@@ -56,7 +56,7 @@ export default function DropSection({ available: initialAvailable, price, curren
       </div>
 
       {/* ── Grid producto ─────────────────────────────────────────────────── */}
-      <div className="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-12 sm:gap-16 lg:gap-28 items-start">
+      <div className="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-6 sm:gap-12 lg:gap-28 items-start">
 
         {/* Visor */}
         <motion.div
@@ -69,13 +69,13 @@ export default function DropSection({ available: initialAvailable, price, curren
         </motion.div>
 
         {/* Ficha técnica */}
-        <div className="flex flex-col gap-7 lg:pt-2">
+        <div className="flex flex-col gap-5 lg:gap-7 lg:pt-2">
 
           {/* Título */}
           <motion.div {...reveal(0)}>
             <h2
               className="font-bebas text-bone leading-[0.88]"
-              style={{ fontSize: 'clamp(46px, 7.5vw, 88px)', letterSpacing: '0.04em' }}
+              style={{ fontSize: 'clamp(40px, 7.5vw, 88px)', letterSpacing: '0.04em' }}
             >
               Made to Shine
             </h2>
@@ -117,7 +117,7 @@ export default function DropSection({ available: initialAvailable, price, curren
           <motion.div className="flex items-baseline gap-3" {...reveal(5)}>
             <span
               className="font-bebas text-bone leading-none"
-              style={{ fontSize: 'clamp(48px, 7vw, 74px)', letterSpacing: '0.02em' }}
+              style={{ fontSize: 'clamp(42px, 7vw, 74px)', letterSpacing: '0.02em' }}
             >
               {price}
             </span>

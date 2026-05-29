@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -8,11 +8,11 @@ const EASE = [0.25, 1, 0.5, 1] as [number, number, number, number];
 
 interface Props { available?: number | null }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   BANNER 01 — EXCLUSIVIDAD
-   Layout: texto + número gigante izquierda / gorra derecha (parallax)
-   Emoción: silencio, lujo, rareza
-───────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   BANNER 01 â€” EXCLUSIVIDAD
+   Layout: texto + nÃºmero gigante izquierda / gorra derecha (parallax)
+   EmociÃ³n: silencio, lujo, rareza
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BannerExclusividad({ available }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -25,12 +25,12 @@ function BannerExclusividad({ available }: Props) {
     <div ref={ref} className="relative border-b border-[var(--line)] overflow-hidden">
       <div
         className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]"
-        style={{ minHeight: 'clamp(460px, 58vh, 640px)' }}
+        style={{ minHeight: 'clamp(320px, 50vh, 640px)' }}
       >
-        {/* ── Left: número editorial + copy ───────────────────────────────── */}
-        <div className="relative flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-16 lg:py-20 border-r-0 lg:border-r border-[var(--line)] overflow-hidden">
+        {/* â”€â”€ Left: nÃºmero editorial + copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="relative flex flex-col justify-center px-5 sm:px-12 lg:px-16 py-9 sm:py-14 lg:py-20 border-r-0 lg:border-r border-[var(--line)] overflow-hidden">
 
-          {/* Ghost cap behind the number — contexto material muy sutil */}
+          {/* Ghost cap behind the number â€” contexto material muy sutil */}
           <motion.div
             className="absolute pointer-events-none select-none"
             style={{ right: '-8%', top: '0', width: '68%', height: '100%', y: ghostY }}
@@ -46,12 +46,12 @@ function BannerExclusividad({ available }: Props) {
 
           {/* Section label + eyelet dots */}
           <motion.div
-            className="flex items-center gap-3 mb-10"
+            className="flex items-center gap-3 mb-6"
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
             viewport={{ once: true }} transition={{ duration: 0.9 }}
           >
             <span className="font-mono text-[8px] tracking-[0.52em] text-bone-3 uppercase" style={{ opacity: 0.38 }}>
-              01 &nbsp;·&nbsp; Exclusividad
+              01 &nbsp;Â·&nbsp; Exclusividad
             </span>
             <div className="flex gap-[5px] items-center" style={{ opacity: 0.22 }}>
               {[0,1,2,3,4].map(i => (
@@ -60,7 +60,7 @@ function BannerExclusividad({ available }: Props) {
             </div>
           </motion.div>
 
-          {/* Número 100 con acento vertical de stitching */}
+          {/* NÃºmero 100 con acento vertical de stitching */}
           <motion.div style={{ y: numY }} className="relative mb-2">
             {/* Vertical stitch accent */}
             <div
@@ -90,7 +90,7 @@ function BannerExclusividad({ available }: Props) {
                 viewport={{ once: true }}
                 transition={{ delay: 0.35, duration: 0.9 }}
               >
-                SERIAL 001 — 100 &nbsp;·&nbsp; DROP #1
+                SERIAL 001 â€” 100 &nbsp;Â·&nbsp; DROP #1
               </motion.p>
             </div>
           </motion.div>
@@ -113,7 +113,7 @@ function BannerExclusividad({ available }: Props) {
 
           {/* Copy */}
           <motion.p
-            className="font-garamond italic text-bone-3 leading-relaxed mb-10 ml-5"
+            className="font-garamond italic text-bone-3 leading-relaxed mb-6 ml-5"
             style={{ fontSize: 'clamp(15px, 1.9vw, 20px)', maxWidth: '360px' }}
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -125,7 +125,7 @@ function BannerExclusividad({ available }: Props) {
 
           {/* Barra de stock */}
           <motion.div
-            className="flex flex-col gap-2.5 max-w-[260px] ml-5"
+            className="flex flex-col gap-2.5 w-full max-w-[320px] ml-5"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -145,7 +145,7 @@ function BannerExclusividad({ available }: Props) {
             </div>
             <div className="flex justify-between">
               <span className="font-mono text-[7.5px] tracking-[0.26em] uppercase text-bone-2">
-                {available != null ? `${available} disponibles` : '— — —'}
+                {available != null ? `${available} disponibles` : 'â€” â€” â€”'}
               </span>
               <span className="font-mono text-[7.5px] tracking-[0.26em] uppercase text-bone-3 opacity-45">
                 100 total
@@ -154,7 +154,7 @@ function BannerExclusividad({ available }: Props) {
           </motion.div>
         </div>
 
-        {/* ── Right: gorra con parallax ────────────────────────────────────── */}
+        {/* â”€â”€ Right: gorra con parallax â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="relative hidden lg:block overflow-hidden">
           <motion.div className="absolute inset-0 flex items-center justify-center" style={{ y: imgY }}>
             <div className="relative w-full h-full">
@@ -176,7 +176,7 @@ function BannerExclusividad({ available }: Props) {
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.28 }}
             viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Drop 01 · Colombia 2026
+            Drop 01 Â· Colombia 2026
           </motion.span>
         </div>
       </div>
@@ -184,11 +184,11 @@ function BannerExclusividad({ available }: Props) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   BANNER 02 — SIN REPOSICIÓN
-   Layout: full-width cinematográfico, gorra oscura de fondo, texto sobrepuesto
-   Emoción: irrepetible, limitado, urgencia elegante
-───────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   BANNER 02 â€” SIN REPOSICIÃ“N
+   Layout: full-width cinematogrÃ¡fico, gorra oscura de fondo, texto sobrepuesto
+   EmociÃ³n: irrepetible, limitado, urgencia elegante
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BannerSinReposicion() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -199,9 +199,9 @@ function BannerSinReposicion() {
     <div
       ref={ref}
       className="relative border-b border-[var(--line)] overflow-hidden flex items-center"
-      style={{ minHeight: 'clamp(380px, 48vh, 520px)' }}
+      style={{ minHeight: 'clamp(280px, 40vh, 520px)' }}
     >
-      {/* Gorra de fondo — muy oscura */}
+      {/* Gorra de fondo â€” muy oscura */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ scale: bgScale }}
@@ -222,7 +222,7 @@ function BannerSinReposicion() {
         aria-hidden
       />
 
-      {/* Línea de stitching animada */}
+      {/* LÃ­nea de stitching animada */}
       <motion.div
         className="absolute inset-x-0 pointer-events-none"
         style={{ top: '50%' }}
@@ -243,7 +243,7 @@ function BannerSinReposicion() {
 
       {/* Contenido */}
       <motion.div
-        className="relative z-10 w-full max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 py-16"
+        className="relative z-10 w-full max-w-[1440px] mx-auto px-5 sm:px-12 lg:px-16 py-9 sm:py-14"
         style={{ y: textY }}
       >
         <motion.p
@@ -251,7 +251,7 @@ function BannerSinReposicion() {
           initial={{ opacity: 0 }} whileInView={{ opacity: 0.38 }}
           viewport={{ once: true }} transition={{ duration: 0.8 }}
         >
-          02 &nbsp;·&nbsp; Sin reposición
+          02 &nbsp;Â·&nbsp; Sin reposiciÃ³n
         </motion.p>
 
         <motion.h2
@@ -262,7 +262,7 @@ function BannerSinReposicion() {
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 1.3, ease: EASE }}
         >
-          Sin reposición.
+          Sin reposiciÃ³n.
         </motion.h2>
 
         <motion.p
@@ -279,11 +279,11 @@ function BannerSinReposicion() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   BANNER 03 — NUMERADAS
-   Layout: imagen técnica izquierda (blueprint) / serial + texto derecha
-   Emoción: pieza de colección, identidad, trazabilidad
-───────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   BANNER 03 â€” NUMERADAS
+   Layout: imagen tÃ©cnica izquierda (blueprint) / serial + texto derecha
+   EmociÃ³n: pieza de colecciÃ³n, identidad, trazabilidad
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BannerNumeradas() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -293,9 +293,9 @@ function BannerNumeradas() {
     <div ref={ref} className="relative border-b border-[var(--line)] overflow-hidden">
       <div
         className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-[2fr_3fr]"
-        style={{ minHeight: 'clamp(420px, 52vh, 580px)' }}
+        style={{ minHeight: 'clamp(320px, 44vh, 580px)' }}
       >
-        {/* ── Left: imagen con overlay técnico ────────────────────────────── */}
+        {/* â”€â”€ Left: imagen con overlay tÃ©cnico â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="relative hidden lg:block border-r border-[var(--line)] overflow-hidden">
           <motion.div className="absolute inset-0 flex items-center justify-center" style={{ y: imgY }}>
             <div className="relative w-full h-full">
@@ -308,7 +308,7 @@ function BannerNumeradas() {
             </div>
           </motion.div>
 
-          {/* Blueprint lines — SVG overlay */}
+          {/* Blueprint lines â€” SVG overlay */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden>
             <line x1="0" y1="50%" x2="100%" y2="50%" stroke="rgba(235,230,219,0.06)" strokeWidth="1" />
             <line x1="50%" y1="0" x2="50%" y2="100%" stroke="rgba(235,230,219,0.06)" strokeWidth="1" />
@@ -323,15 +323,15 @@ function BannerNumeradas() {
           />
         </div>
 
-        {/* ── Right: serial + copy ─────────────────────────────────────────── */}
-        <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-16 lg:py-20">
+        {/* â”€â”€ Right: serial + copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="flex flex-col justify-center px-5 sm:px-12 lg:px-16 py-9 sm:py-14 lg:py-20">
 
           <motion.p
-            className="font-mono text-[8px] tracking-[0.52em] text-bone-3 uppercase mb-12"
+            className="font-mono text-[8px] tracking-[0.52em] text-bone-3 uppercase mb-7"
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.38 }}
             viewport={{ once: true }} transition={{ duration: 0.8 }}
           >
-            03 &nbsp;·&nbsp; Numeradas
+            03 &nbsp;Â·&nbsp; Numeradas
           </motion.p>
 
           <motion.div
@@ -351,7 +351,7 @@ function BannerNumeradas() {
               className="font-mono text-bone-3 mt-2"
               style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', letterSpacing: '0.32em', opacity: 0.30 }}
             >
-              — #100
+              â€” #100
             </p>
           </motion.div>
 
@@ -380,11 +380,11 @@ function BannerNumeradas() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   BANNER 04 — PARA COLECCIONISTAS
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   BANNER 04 â€” PARA COLECCIONISTAS
    Layout: gorra editorial izquierda (escala suave) / manifiesto + CTA derecha
-   Emoción: culto, pertenencia, archivo, exclusividad definitiva
-───────────────────────────────────────────────────────────────────────────── */
+   EmociÃ³n: culto, pertenencia, archivo, exclusividad definitiva
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function BannerColeccionistas() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -395,10 +395,10 @@ function BannerColeccionistas() {
     <div ref={ref} className="relative overflow-hidden">
       <div
         className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-[3fr_2fr]"
-        style={{ minHeight: 'clamp(460px, 56vh, 620px)' }}
+        style={{ minHeight: 'clamp(320px, 48vh, 620px)' }}
       >
-        {/* ── Left: gorra editorial — escala lenta con scroll ──────────────── */}
-        <div className="relative overflow-hidden min-h-[280px] lg:min-h-0 border-r-0 lg:border-r border-[var(--line)]">
+        {/* â”€â”€ Left: gorra editorial â€” escala lenta con scroll â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="relative overflow-hidden min-h-[220px] lg:min-h-0 border-r-0 lg:border-r border-[var(--line)]">
           <motion.div className="absolute inset-0" style={{ scale: imgScale }}>
             <Image
               src="/drop1-img/front.png"
@@ -414,17 +414,17 @@ function BannerColeccionistas() {
           />
         </div>
 
-        {/* ── Right: manifiesto final ───────────────────────────────────────── */}
+        {/* â”€â”€ Right: manifiesto final â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <motion.div
-          className="flex flex-col justify-center px-8 sm:px-12 lg:px-14 py-16 lg:py-20"
+          className="flex flex-col justify-center px-5 sm:px-12 lg:px-14 py-9 sm:py-14 lg:py-20"
           style={{ y: textY }}
         >
           <motion.p
-            className="font-mono text-[8px] tracking-[0.52em] text-bone-3 uppercase mb-12"
+            className="font-mono text-[8px] tracking-[0.52em] text-bone-3 uppercase mb-7"
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.38 }}
             viewport={{ once: true }} transition={{ duration: 0.8 }}
           >
-            04 &nbsp;·&nbsp; Para coleccionistas
+            04 &nbsp;Â·&nbsp; Para coleccionistas
           </motion.p>
 
           <motion.div
@@ -438,7 +438,7 @@ function BannerColeccionistas() {
               className="font-bebas text-bone leading-[0.92]"
               style={{ fontSize: 'clamp(32px, 4.8vw, 62px)', letterSpacing: '0.04em' }}
             >
-              No es mercancía.
+              No es mercancÃ­a.
             </h2>
             <h2
               className="font-bebas text-bone-3 leading-[0.92] mt-1"
@@ -458,14 +458,14 @@ function BannerColeccionistas() {
           />
 
           <motion.p
-            className="font-garamond italic text-bone-3 leading-relaxed mb-14"
+            className="font-garamond italic text-bone-3 leading-relaxed mb-8"
             style={{ fontSize: 'clamp(14px, 1.5vw, 17px)', maxWidth: '300px' }}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.35, duration: 1.0 }}
           >
-            Diseñada para quienes entienden que
+            DiseÃ±ada para quienes entienden que
             lo verdaderamente exclusivo no se repite.
           </motion.p>
 
@@ -481,7 +481,7 @@ function BannerColeccionistas() {
               Adquirir ahora
             </span>
             <span className="font-mono text-bone opacity-40 group-hover:translate-x-1.5 transition-transform duration-300">
-              →
+              â†’
             </span>
           </motion.a>
         </motion.div>
@@ -490,15 +490,15 @@ function BannerColeccionistas() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   SECCIÓN PRINCIPAL
-───────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   SECCIÃ“N PRINCIPAL
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 export default function EditorialSection({ available }: Props) {
   return (
     <section id="manifesto" className="relative w-full overflow-hidden">
 
       {/* Header */}
-      <div className="border-t border-b border-[var(--line)] px-8 sm:px-10 lg:px-16 py-5">
+      <div className="border-t border-b border-[var(--line)] px-5 sm:px-10 lg:px-16 py-4">
         <motion.div
           className="max-w-[1440px] mx-auto flex items-center justify-between"
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
@@ -508,7 +508,7 @@ export default function EditorialSection({ available }: Props) {
             Manifiesto
           </span>
           <span className="font-mono text-[8px] tracking-[0.28em] text-bone-3 uppercase opacity-35">
-            Drop #1 · 2026
+            Drop #1 Â· 2026
           </span>
         </motion.div>
       </div>
@@ -520,7 +520,7 @@ export default function EditorialSection({ available }: Props) {
 
       {/* Cita final */}
       <div className="border-t border-[var(--line)]">
-        <div className="max-w-[1440px] mx-auto px-8 sm:px-10 lg:px-16 py-16 sm:py-20">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-16 py-10 sm:py-16">
           <motion.blockquote
             className="flex flex-col items-center text-center gap-6"
             initial={{ opacity: 0, y: 12 }}
@@ -534,10 +534,10 @@ export default function EditorialSection({ available }: Props) {
               style={{ fontSize: 'clamp(16px, 2vw, 21px)' }}
             >
               &ldquo;La gorra que llevabas era tu mundo entero.
-              Y solo había cien mundos como ese.&rdquo;
+              Y solo habÃ­a cien mundos como ese.&rdquo;
             </p>
             <span className="font-mono text-[7.5px] tracking-[0.44em] text-bone-3 uppercase opacity-35">
-              Cuscus Hats · Drop #1 · 100 gorras
+              Cuscus Hats Â· Drop #1 Â· 100 gorras
             </span>
           </motion.blockquote>
         </div>
@@ -546,3 +546,6 @@ export default function EditorialSection({ available }: Props) {
     </section>
   );
 }
+
+
+

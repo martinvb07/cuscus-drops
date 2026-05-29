@@ -122,7 +122,7 @@ export default function ProductViewer360() {
                 alt={v.alt}
                 fill
                 sizes="520px"
-                className="object-contain p-6 sm:p-10"
+                className="object-contain p-3 sm:p-8"
                 priority={i === 0}
                 draggable={false}
               />

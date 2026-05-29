@@ -345,7 +345,7 @@ export default function HeroSection() {
       <div className="relative z-10 lg:hidden flex flex-col min-h-screen">
 
         {/* 1. Title block */}
-        <div className="px-6 pt-[86px] pb-7" style={{ background: 'rgba(10,10,10,1)' }}>
+        <div className="px-5 pt-[82px] pb-5" style={{ background: 'rgba(10,10,10,1)' }}>
           <motion.div className="flex items-center gap-2.5 mb-5" {...appear(0)}>
             <div style={{ width: '14px', height: '1px', background: 'rgba(235,230,219,0.42)' }} />
             <span className="font-mono uppercase" style={{ fontSize: '6.5px', letterSpacing: '0.55em', color: 'rgba(235,230,219,0.62)' }}>
@@ -375,7 +375,7 @@ export default function HeroSection() {
         </div>
 
         {/* 2. Cap */}
-        <div className="relative shrink-0" style={{ height: '46vh', minHeight: '260px' }}>
+        <div className="relative shrink-0" style={{ height: '42vh', minHeight: '240px' }}>
           <motion.div className="absolute inset-0"
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -391,7 +391,7 @@ export default function HeroSection() {
         </div>
 
         {/* 3. Specs + CTA */}
-        <div className="flex flex-col px-6 pt-3 pb-12 gap-6" style={{ background: 'rgba(10,10,10,1)', flex: 1 }}>
+        <div className="flex flex-col px-5 pt-2 pb-10 gap-5" style={{ background: 'rgba(10,10,10,1)', flex: 1 }}>
 
           {/* Specs */}
           <motion.div className="flex flex-col gap-4 pb-6 border-b border-[rgba(235,230,219,0.07)]" {...appear(0.20)}>

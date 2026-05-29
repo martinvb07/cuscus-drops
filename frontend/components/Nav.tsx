@@ -21,7 +21,7 @@ export default function Nav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-40 grid items-center px-8 sm:px-10 lg:px-14 transition-all duration-700"
+      className="fixed top-0 left-0 right-0 z-40 grid items-center px-5 sm:px-10 lg:px-14 transition-all duration-700"
       style={{
         gridTemplateColumns:  '1fr auto 1fr',
         height:               '70px',
@@ -72,7 +72,7 @@ export default function Nav() {
         </span>
         <a
           href="#drop"
-          className="font-mono text-[8px] tracking-[0.38em] uppercase text-bone border border-[rgba(235,230,219,0.22)] px-6 py-[10px] hover:border-[rgba(235,230,219,0.50)] hover:bg-[rgba(235,230,219,0.05)] transition-all duration-500"
+          className="font-mono text-[8px] tracking-[0.38em] uppercase text-bone border border-[rgba(235,230,219,0.22)] px-4 sm:px-6 py-[10px] hover:border-[rgba(235,230,219,0.50)] hover:bg-[rgba(235,230,219,0.05)] transition-all duration-500 whitespace-nowrap"
         >
           Comprar
         </a>

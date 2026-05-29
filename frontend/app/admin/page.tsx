@@ -205,7 +205,7 @@ export default function AdminPage() {
     const d = await oRes.json();
     setOrders(d.orders); setTotal(d.total);
     setLastUpdated(new Date());
-  }, [page, search, financial, fulfillment]);
+  }, [page, search, financial, fulfillment, token]);
 
   useEffect(() => { if (authed) load(); }, [authed, load]);
 

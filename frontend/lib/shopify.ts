@@ -22,7 +22,9 @@ async function adminRest(path: string) {
 /* ── Crear URL de checkout directa ─────────────────────────────────────────── */
 export async function createCheckout(variantId: string, quantity = 1): Promise<string> {
   if (!DOMAIN) throw new Error('SHOPIFY_STORE_DOMAIN no configurado');
-  return `https://${CHECKOUT_DOMAIN}/cart/${numericId(variantId)}:${quantity}`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `https://${DOMAIN}`;
+  const returnTo = encodeURIComponent(`${siteUrl}/success`);
+  return `https://${CHECKOUT_DOMAIN}/cart/${numericId(variantId)}:${quantity}?return_to=${returnTo}`;
 }
 
 /* ── Stock disponible ─────────────────────────────────────────────────────── */

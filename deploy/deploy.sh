@@ -1,10 +1,10 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# Script de deploy/actualización (ejecutar en el VPS cada vez que haya cambios)
-# Uso: bash deploy/deploy.sh
+# Deploy inicial del Drop #1 en el VPS (sin activar todavía en el dominio)
+# Uso: bash /var/www/cuscus-drop/deploy/deploy.sh
 # ─────────────────────────────────────────────────────────────────────────────
 set -e
-APP_DIR="/var/www/cuscus"
+APP_DIR="/var/www/cuscus-drop"
 
 echo "=== Instalando dependencias del backend ==="
 cd "$APP_DIR/backend"
@@ -17,25 +17,13 @@ npm install --omit=dev
 echo "=== Build del frontend ==="
 npm run build
 
-echo "=== Copiando configs de Nginx ==="
-cp "$APP_DIR/deploy/nginx/cuscus.co.conf"     /etc/nginx/sites-available/cuscus.co
-cp "$APP_DIR/deploy/nginx/api.cuscus.co.conf" /etc/nginx/sites-available/api.cuscus.co
-
-# Habilitar sitios si no están habilitados
-ln -sf /etc/nginx/sites-available/cuscus.co     /etc/nginx/sites-enabled/cuscus.co
-ln -sf /etc/nginx/sites-available/api.cuscus.co /etc/nginx/sites-enabled/api.cuscus.co
-
-echo "=== Validando config de Nginx ==="
-nginx -t
-
-echo "=== Recargando Nginx ==="
-systemctl reload nginx
-
-echo "=== Arrancando/Reiniciando apps con PM2 ==="
+echo "=== Arrancando apps con PM2 (puertos 3003 y 4002) ==="
 cd "$APP_DIR"
-pm2 start deploy/ecosystem.config.cjs || pm2 restart deploy/ecosystem.config.cjs
+pm2 start deploy/ecosystem.config.cjs || pm2 reload deploy/ecosystem.config.cjs
 pm2 save
 
 echo ""
-echo "✓ Deploy completado"
+echo "✓ Deploy completado — apps corriendo en puertos 3003 y 4002"
+echo "  El dominio aún apunta a la fase pre-drop."
+echo "  Cuando llegue la hora del drop: bash deploy/switch.sh"
 pm2 status

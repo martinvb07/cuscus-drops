@@ -19,7 +19,32 @@ export default function Loader() {
 
   return (
     <div className={`loader${fading ? ' loader-out' : ''}`}>
-      <div className="loader-inner">
+
+      {/* ── Video de fondo ─────────────────────────────────────────────────── */}
+      <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-black">
+        <video
+          src="/drop1-img/IMG_2038.MP4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            /* Móvil: llena la pantalla / Desktop: alto completo, negro a los lados */
+            height: '100%',
+            width: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+        />
+        {/* Overlay oscuro para que el texto encima sea legible */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'rgba(0,0,0,0.52)' }}
+        />
+      </div>
+
+      {/* ── Contenido encima del video ──────────────────────────────────────── */}
+      <div className="loader-inner" style={{ position: 'relative', zIndex: 2 }}>
 
         {/* Logo CUSCUS — respira suavemente */}
         <div
@@ -36,7 +61,7 @@ export default function Loader() {
             alt="Cuscus Hats"
             width={210}
             height={68}
-            style={{ filter: 'brightness(0) invert(1)', opacity: 0.88 }}
+            style={{ filter: 'brightness(0) invert(1)', opacity: 0.92 }}
             priority
           />
         </div>

@@ -51,7 +51,7 @@ function BannerExclusividad({ available }: Props) {
             viewport={{ once: true }} transition={{ duration: 0.9 }}
           >
             <span className="font-mono text-[8px] tracking-[0.52em] text-bone-3 uppercase" style={{ opacity: 0.38 }}>
-              01 &nbsp;Â·&nbsp; Exclusividad
+              01 &nbsp;·&nbsp; Exclusividad
             </span>
             <div className="flex gap-[5px] items-center" style={{ opacity: 0.22 }}>
               {[0,1,2,3,4].map(i => (
@@ -90,7 +90,7 @@ function BannerExclusividad({ available }: Props) {
                 viewport={{ once: true }}
                 transition={{ delay: 0.35, duration: 0.9 }}
               >
-                SERIAL 001 â€” 100 &nbsp;Â·&nbsp; DROP #1
+                SERIAL 001 — 100 &nbsp;·&nbsp; DROP #1
               </motion.p>
             </div>
           </motion.div>
@@ -145,7 +145,7 @@ function BannerExclusividad({ available }: Props) {
             </div>
             <div className="flex justify-between">
               <span className="font-mono text-[7.5px] tracking-[0.26em] uppercase text-bone-2">
-                {available != null ? `${available} disponibles` : 'â€” â€” â€”'}
+                {available != null ? `${available} disponibles` : '— — —'}
               </span>
               <span className="font-mono text-[7.5px] tracking-[0.26em] uppercase text-bone-3 opacity-45">
                 100 total
@@ -176,7 +176,7 @@ function BannerExclusividad({ available }: Props) {
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.28 }}
             viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.8 }}
           >
-            Drop 01 Â· Colombia 2026
+            Drop 01 · Colombia 2026
           </motion.span>
         </div>
       </div>
@@ -251,7 +251,7 @@ function BannerSinReposicion() {
           initial={{ opacity: 0 }} whileInView={{ opacity: 0.38 }}
           viewport={{ once: true }} transition={{ duration: 0.8 }}
         >
-          02 &nbsp;Â·&nbsp; Sin reposiciÃ³n
+          02 &nbsp;·&nbsp; Sin reposici&oacute;n
         </motion.p>
 
         <motion.h2
@@ -262,7 +262,7 @@ function BannerSinReposicion() {
           viewport={{ once: true, margin: '-40px' }}
           transition={{ duration: 1.3, ease: EASE }}
         >
-          Sin reposiciÃ³n.
+          Sin reposici&oacute;n.
         </motion.h2>
 
         <motion.p
@@ -331,7 +331,7 @@ function BannerNumeradas() {
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.38 }}
             viewport={{ once: true }} transition={{ duration: 0.8 }}
           >
-            03 &nbsp;Â·&nbsp; Numeradas
+            03 &nbsp;·&nbsp; Numeradas
           </motion.p>
 
           <motion.div
@@ -351,7 +351,7 @@ function BannerNumeradas() {
               className="font-mono text-bone-3 mt-2"
               style={{ fontSize: 'clamp(11px, 1.3vw, 14px)', letterSpacing: '0.32em', opacity: 0.30 }}
             >
-              â€” #100
+              — #100
             </p>
           </motion.div>
 
@@ -424,7 +424,7 @@ function BannerColeccionistas() {
             initial={{ opacity: 0 }} whileInView={{ opacity: 0.38 }}
             viewport={{ once: true }} transition={{ duration: 0.8 }}
           >
-            04 &nbsp;Â·&nbsp; Para coleccionistas
+            04 &nbsp;·&nbsp; Para coleccionistas
           </motion.p>
 
           <motion.div
@@ -438,7 +438,7 @@ function BannerColeccionistas() {
               className="font-bebas text-bone leading-[0.92]"
               style={{ fontSize: 'clamp(32px, 4.8vw, 62px)', letterSpacing: '0.04em' }}
             >
-              No es mercancÃ­a.
+              No es mercanc&iacute;a.
             </h2>
             <h2
               className="font-bebas text-bone-3 leading-[0.92] mt-1"
@@ -465,7 +465,7 @@ function BannerColeccionistas() {
             viewport={{ once: true }}
             transition={{ delay: 0.35, duration: 1.0 }}
           >
-            DiseÃ±ada para quienes entienden que
+            Dise&ntilde;ada para quienes entienden que
             lo verdaderamente exclusivo no se repite.
           </motion.p>
 
@@ -481,7 +481,7 @@ function BannerColeccionistas() {
               Adquirir ahora
             </span>
             <span className="font-mono text-bone opacity-40 group-hover:translate-x-1.5 transition-transform duration-300">
-              â†’
+              →
             </span>
           </motion.a>
         </motion.div>
@@ -508,7 +508,7 @@ export default function EditorialSection({ available }: Props) {
             Manifiesto
           </span>
           <span className="font-mono text-[8px] tracking-[0.28em] text-bone-3 uppercase opacity-35">
-            Drop #1 Â· 2026
+            Drop #1 · 2026
           </span>
         </motion.div>
       </div>
@@ -534,10 +534,10 @@ export default function EditorialSection({ available }: Props) {
               style={{ fontSize: 'clamp(16px, 2vw, 21px)' }}
             >
               &ldquo;La gorra que llevabas era tu mundo entero.
-              Y solo habÃ­a cien mundos como ese.&rdquo;
+              Y solo hab&iacute;a cien mundos como ese.&rdquo;
             </p>
             <span className="font-mono text-[7.5px] tracking-[0.44em] text-bone-3 uppercase opacity-35">
-              Cuscus Hats Â· Drop #1 Â· 100 gorras
+              Cuscus Hats · Drop #1 · 100 gorras
             </span>
           </motion.blockquote>
         </div>

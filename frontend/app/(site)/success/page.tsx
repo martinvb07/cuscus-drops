@@ -86,10 +86,10 @@ function SuccessContent() {
         <p className="font-mono uppercase" style={{ fontSize: '7px', letterSpacing: '0.30em', color: 'rgba(235,230,219,0.32)' }}>
           {isFailed ? 'Soporte' : 'Seguimiento del pedido'}
         </p>
-        <a href="https://instagram.com/cuscus_hats" target="_blank" rel="noopener noreferrer"
+        <a href="https://instagram.com/cuscushats_" target="_blank" rel="noopener noreferrer"
           className="font-mono uppercase text-bone-3 transition-colors duration-300 hover:text-bone"
           style={{ fontSize: '8px', letterSpacing: '0.28em' }}>
-          @cuscus_hats
+          @cuscushats_
         </a>
       </div>
 

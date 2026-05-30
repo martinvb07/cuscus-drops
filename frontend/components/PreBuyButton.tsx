@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import TermsModal from './TermsModal';
 
 export default function PreBuyButton({ available }: { available: number | null }) {
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const soldOut = available !== null && available <= 0;
 
@@ -119,6 +121,19 @@ export default function PreBuyButton({ available }: { available: number | null }
       <p className="font-mono text-[7.5px] tracking-[0.28em] text-bone-3 uppercase text-center" style={{ opacity: 0.45 }}>
         Checkout seguro vía Shopify &nbsp;·&nbsp; COP
       </p>
+
+      {/* Terms link */}
+      <p className="font-mono text-[7px] tracking-[0.22em] uppercase text-center" style={{ opacity: 0.35 }}>
+        <span className="text-bone-3">Entrega estimada 32 días &nbsp;·&nbsp; </span>
+        <button
+          onClick={() => setTermsOpen(true)}
+          className="text-bone-3 underline underline-offset-2 hover:opacity-70 transition-opacity duration-200"
+        >
+          Términos y condiciones
+        </button>
+      </p>
+
+      <TermsModal open={termsOpen} onClose={() => setTermsOpen(false)} />
     </div>
   );
 }

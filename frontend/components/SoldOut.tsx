@@ -78,7 +78,7 @@ export default function SoldOut() {
 
         {/* Botón — igual que "RECIBE ALERTAS +" del pre-reg */}
         <a
-          href="https://instagram.com/cuscus_hats"
+          href="https://instagram.com/cuscushats_"
           target="_blank" rel="noopener noreferrer"
           className="font-mono uppercase transition-opacity hover:opacity-85"
           style={{
@@ -110,7 +110,7 @@ export default function SoldOut() {
         style={{ zIndex: 4, background: 'rgba(0,0,0,0.88)', borderTop: '1px solid rgba(235,230,219,0.06)' }}
       >
         <div className="flex items-center gap-5">
-          <a href="https://instagram.com/cuscus_hats" target="_blank" rel="noopener noreferrer"
+          <a href="https://instagram.com/cuscushats_" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1.5 hover:opacity-100 transition-opacity"
             style={{ opacity: 0.65, color: 'var(--bone)' }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
@@ -120,7 +120,7 @@ export default function SoldOut() {
               <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>
             </svg>
             <span className="font-mono uppercase"
-              style={{ fontSize: '7px', letterSpacing: '0.28em' }}>@cuscus_hats</span>
+              style={{ fontSize: '7px', letterSpacing: '0.28em' }}>@cuscushats_</span>
           </a>
           <a href="https://tiktok.com/@cuscus.hats" target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1.5 hover:opacity-100 transition-opacity"

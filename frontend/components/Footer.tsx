@@ -26,7 +26,7 @@ export default function Footer() {
 
           <div className="flex flex-col items-end gap-3">
             <div className="flex items-center gap-6">
-              <a href="https://instagram.com/cuscus_hats" target="_blank" rel="noopener noreferrer"
+              <a href="https://instagram.com/cuscushats_" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 font-mono text-[9px] tracking-[0.28em] uppercase text-bone-2 hover:text-bone transition-colors duration-200">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
                   <rect x="3" y="3" width="18" height="18" rx="4" />

@@ -55,7 +55,8 @@ router.get('/', async (req, res) => {
     if (financial)   filter.financialStatus  = financial;
     if (fulfillment) filter.fulfillmentStatus = fulfillment;
     if (search) {
-      const re = new RegExp(search, 'i');
+      const escaped = String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(escaped, 'i');
       filter.$or = [
         { 'customer.firstName': re },
         { 'customer.lastName':  re },

@@ -10,8 +10,8 @@ interface Props {
 
 export default function ProductHero({ available, price, currency }: Props) {
   return (
-    <section className="w-full max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12 pt-6 sm:pt-10 pb-16
-                        grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-center">
+    <section className="w-full max-w-[1100px] mx-auto px-4 sm:px-8 lg:px-12 pt-4 sm:pt-10 pb-16
+                        grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-center">
 
       {/* ── Columna izquierda: Visor 360° ─────────────────────────────────── */}
       <ProductViewer360 />

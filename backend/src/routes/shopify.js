@@ -35,6 +35,10 @@ router.post('/webhook', async (req, res) => {
   try {
     if (topic === 'orders/create' || topic === 'orders/paid') {
       if (!data.id) return res.status(400).send('Missing order id');
+      if (data.test === true) {
+        console.log(`🧪 Orden de test ignorada: #${data.order_number}`);
+        return res.status(200).send('OK');
+      }
       await upsertOrder(data);
     } else if (topic === 'orders/updated') {
       await updateOrderStatus(data);

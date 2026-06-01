@@ -198,16 +198,24 @@ export default function HeroSection() {
           </motion.div>
 
           {/* Top/bottom vignette */}
-          <div className="absolute inset-0 pointer-events-none z-10"
+          <div className="absolute inset-0 pointer-events-none z-[15]"
             style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.52) 0%, transparent 20%, transparent 78%, rgba(10,10,10,0.52) 100%)' }}
             aria-hidden />
           {/* Right blend into specs panel */}
-          <div className="absolute inset-0 pointer-events-none z-10"
+          <div className="absolute inset-0 pointer-events-none z-[15]"
             style={{ background: 'linear-gradient(to right, transparent 65%, rgba(10,10,10,0.32) 84%, rgba(10,10,10,0.58) 100%)' }}
             aria-hidden />
 
+          {/* Halo de luz detrás de la gorra — desktop */}
+          <div className="absolute inset-0 pointer-events-none z-[5]" aria-hidden style={{
+            background: [
+              'radial-gradient(ellipse 62% 52% at 50% 46%, rgba(220,205,175,0.18) 0%, rgba(180,155,115,0.09) 40%, transparent 68%)',
+              'radial-gradient(ellipse 38% 30% at 50% 48%, rgba(255,240,200,0.07) 0%, transparent 52%)',
+            ].join(', '),
+          }} />
+
           {/* Cap — centered in column */}
-          <motion.div className="absolute inset-0"
+          <motion.div className="absolute inset-0 z-[6]"
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: BASE, duration: 2.6, ease: EASE }}
@@ -215,13 +223,13 @@ export default function HeroSection() {
             <Image
               src="/drop1-img/front.png"
               alt="Gorra Cuscus Hats — Drop #1 · 100 unidades"
-              fill priority
-              style={{ objectFit: 'contain', padding: '5% 5% 5% 3%' }}
+              fill priority quality={100}
+              style={{ objectFit: 'contain', padding: '2% 3% 2% 1%' }}
             />
           </motion.div>
 
           {/* Hotspot dots */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 25 }} aria-hidden>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 30 }} aria-hidden>
             {HOTSPOTS.map(({ fx, fy }, i) => (
               <motion.g key={i}
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -247,7 +255,7 @@ export default function HeroSection() {
           {/* Bottom metadata */}
           <motion.p
             className="absolute bottom-7 left-1/2 font-mono uppercase whitespace-nowrap"
-            style={{ zIndex: 30, transform: 'translateX(-50%)', fontSize: '6.5px', letterSpacing: '0.44em', color: 'rgba(235,230,219,0.30)' }}
+            style={{ zIndex: 35, transform: 'translateX(-50%)', fontSize: '6.5px', letterSpacing: '0.44em', color: 'rgba(235,230,219,0.30)' }}
             {...appear(0.90)}
           >
             Drop 01 · 100 unidades · Colombia
@@ -375,14 +383,18 @@ export default function HeroSection() {
         </div>
 
         {/* 2. Cap */}
-        <div className="relative shrink-0" style={{ height: '42vh', minHeight: '240px' }}>
-          <motion.div className="absolute inset-0"
+        <div className="relative shrink-0" style={{ height: '52vh', minHeight: '280px' }}>
+          {/* Halo de luz — móvil */}
+          <div className="absolute inset-0 pointer-events-none z-0" aria-hidden style={{
+            background: 'radial-gradient(ellipse 70% 55% at 50% 48%, rgba(220,205,175,0.16) 0%, rgba(160,140,105,0.07) 42%, transparent 68%)',
+          }} />
+          <motion.div className="absolute inset-0 z-[1]"
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: BASE, duration: 2.2, ease: EASE }}
           >
-            <Image src="/drop1-img/front.png" alt="Gorra Cuscus Hats" fill priority
-              style={{ objectFit: 'contain', padding: '10px 8%' }} />
+            <Image src="/drop1-img/front.png" alt="Gorra Cuscus Hats" fill priority quality={100}
+              style={{ objectFit: 'contain', padding: '6px 5%' }} />
           </motion.div>
           <div className="absolute top-0 left-0 right-0 h-10 pointer-events-none"
             style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,1), transparent)' }} aria-hidden />

@@ -5,7 +5,7 @@ import { getProductDetails } from './shopify-admin';
 const _fetchDropDetails = unstable_cache(
   (variantId: string) => getProductDetails(variantId),
   ['drop-details'],
-  { revalidate: 30 },
+  { revalidate: 5 },
 );
 
 export const getDropDetails = cache(async () => {

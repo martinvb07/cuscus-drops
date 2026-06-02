@@ -79,8 +79,8 @@ export default function PreBuyButton({ available }: { available: number | null }
               transition={{ duration: 0.2 }}
             >
               <span
-                className="block rounded-full border border-current border-t-transparent"
-                style={{ width: '10px', height: '10px', animation: 'spin 0.7s linear infinite' }}
+                className="block animate-spin rounded-full border border-current border-t-transparent"
+                style={{ width: '10px', height: '10px' }}
               />
               Preparando checkout
             </motion.span>
@@ -124,7 +124,7 @@ export default function PreBuyButton({ available }: { available: number | null }
 
       {/* Terms link */}
       <p className="font-mono text-[7px] tracking-[0.22em] uppercase text-center" style={{ opacity: 0.35 }}>
-        <span className="text-bone-3">Entrega estimada 32 días &nbsp;·&nbsp; </span>
+        <span className="text-bone-3">Entrega estimada 38 días &nbsp;·&nbsp; </span>
         <button
           onClick={() => setTermsOpen(true)}
           className="text-bone-3 underline underline-offset-2 hover:opacity-70 transition-opacity duration-200"

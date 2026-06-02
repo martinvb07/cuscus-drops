@@ -70,7 +70,7 @@ export default function TermsModal({ open, onClose }: { open: boolean; onClose: 
                 <p>
                   Cada gorra del Drop #1 es producida bajo pedido luego del lanzamiento oficial el{' '}
                   <strong className="text-bone">2 de junio de 2026</strong>. El tiempo estimado de producción y entrega es de{' '}
-                  <strong className="text-bone">32 días calendario</strong> a partir de esa fecha.
+                  <strong className="text-bone">38 días calendario</strong> a partir de esa fecha.
                 </p>
                 <p>
                   Hacemos despachos a todo Colombia a través de operadores logísticos certificados. El cliente recibirá

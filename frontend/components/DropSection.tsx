@@ -114,7 +114,7 @@ export default function DropSection({ available: initialAvailable, price, curren
           <motion.div className="w-8 h-px bg-[var(--bone-3)] opacity-20" {...reveal(4)} />
 
           {/* Precio + Entrega */}
-          <motion.div className="flex flex-col gap-1" {...reveal(5)}>
+          <motion.div className="flex flex-col gap-3" {...reveal(5)}>
 
             {/* Precio */}
             <div className="flex items-baseline gap-3">
@@ -129,16 +129,11 @@ export default function DropSection({ available: initialAvailable, price, curren
               </span>
             </div>
 
-            {/* Entrega */}
-            <div className="flex items-baseline gap-3">
-              <span
-                className="font-bebas text-bone leading-none"
-                style={{ fontSize: 'clamp(28px, 4.5vw, 52px)', letterSpacing: '0.02em' }}
-              >
-                48
-              </span>
-              <span className="font-mono text-[9px] tracking-[0.30em] text-bone-3 uppercase opacity-60">
-                Días de entrega
+            {/* Entrega estimada */}
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-px bg-[var(--bone-3)] opacity-30" />
+              <span className="font-mono text-[9px] sm:text-[10px] tracking-[0.28em] uppercase text-bone-3" style={{ opacity: 0.55 }}>
+                Entrega estimada&nbsp;&nbsp;<strong className="text-bone font-normal" style={{ opacity: 1 }}>48 días</strong>
               </span>
             </div>
 

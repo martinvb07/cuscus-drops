@@ -17,7 +17,7 @@ const ITEMS = [
 ];
 
 const DOT = (
-  <span aria-hidden style={{ opacity: 0.14, margin: '0 20px', fontSize: '10px' }}>✦</span>
+  <span aria-hidden style={{ opacity: 0.40, margin: '0 20px', fontSize: '10px' }}>✦</span>
 );
 
 export default function Ticker() {
@@ -58,8 +58,8 @@ export default function Ticker() {
         {all.map((item, i) => (
           <span key={i} className="flex items-center shrink-0">
             <span
-              className="font-mono uppercase text-bone-3"
-              style={{ fontSize: '7px', letterSpacing: '0.50em', opacity: 0.32 }}
+              className="font-mono uppercase text-bone-2"
+              style={{ fontSize: '10px', letterSpacing: '0.50em', opacity: 0.70 }}
             >
               {item}
             </span>

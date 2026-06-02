@@ -50,7 +50,7 @@ export default function ProductHero({ available, price, currency }: Props) {
             'Diseño exclusivo Cuscus Hats',
             'Despacho a todo Colombia',
           ].map(item => (
-            <li key={item} className="flex items-start gap-2 font-mono text-[10px] tracking-[0.15em] uppercase text-bone-3">
+            <li key={item} className="flex items-start gap-2 font-mono text-[12px] tracking-[0.15em] uppercase text-bone-3">
               <span className="text-bone mt-[1px] shrink-0">—</span>
               {item}
             </li>

@@ -100,10 +100,10 @@ export default function DropSection({ available: initialAvailable, price, curren
           <motion.ul className="flex flex-col gap-3" {...reveal(3)}>
             {SPECS.map(([k, v]) => (
               <li key={k} className="flex items-baseline gap-4">
-                <span className="font-mono text-[7px] tracking-[0.28em] uppercase text-bone-3 opacity-45 w-20 shrink-0">
+                <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-bone-3 opacity-45 w-24 shrink-0">
                   {k}
                 </span>
-                <span className="font-mono text-[7.5px] tracking-[0.14em] uppercase text-bone-2">
+                <span className="font-mono text-[11px] tracking-[0.14em] uppercase text-bone-2">
                   {v}
                 </span>
               </li>

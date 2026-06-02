@@ -36,8 +36,33 @@ export default async function Home() {
         currency: process.env.PRODUCT_CURRENCY || 'COP',
       };
 
+  const rawPrice = details?.price ?? process.env.PRODUCT_PRICE ?? '210000';
+  const jsonLd = {
+    '@context':       'https://schema.org',
+    '@type':          'Product',
+    name:             'Gorra Cuscus Hats — Drop #1',
+    description:      'Edición limitada de 100 unidades. Algodón premium, bordado 3D, gamuza artesanal. Producida bajo pedido.',
+    image:            'https://cuscushats.com/drop1-img/front.png',
+    brand:            { '@type': 'Brand', name: 'Cuscus Hats' },
+    sku:              'CUSCUS-DROP1',
+    offers: {
+      '@type':        'Offer',
+      url:            'https://cuscushats.com',
+      priceCurrency:  details?.currencyCode ?? 'COP',
+      price:          parseFloat(rawPrice),
+      availability:   available && available > 0
+                        ? 'https://schema.org/InStock'
+                        : 'https://schema.org/OutOfStock',
+      seller:         { '@type': 'Organization', name: 'Cuscus Hats' },
+    },
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <PageViewTracker />
       <HeroSection />
       <DropSection available={available} price={price} currency={currency} />

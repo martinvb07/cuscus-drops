@@ -118,12 +118,12 @@ export default function PreBuyButton({ available }: { available: number | null }
       </AnimatePresence>
 
       {/* Trust line */}
-      <p className="font-mono text-[7.5px] tracking-[0.28em] text-bone-3 uppercase text-center" style={{ opacity: 0.45 }}>
+      <p className="font-mono text-[9px] tracking-[0.28em] text-bone-2 uppercase text-center" style={{ opacity: 0.75 }}>
         Checkout seguro vía Shopify &nbsp;·&nbsp; COP
       </p>
 
       {/* Terms link */}
-      <p className="font-mono text-[7px] tracking-[0.22em] uppercase text-center" style={{ opacity: 0.35 }}>
+      <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-center" style={{ opacity: 0.65 }}>
         <span className="text-bone-3">Entrega estimada 38 días &nbsp;·&nbsp; </span>
         <button
           onClick={() => setTermsOpen(true)}

@@ -504,10 +504,10 @@ export default function EditorialSection({ available }: Props) {
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
           viewport={{ once: true }} transition={{ duration: 0.9 }}
         >
-          <span className="font-mono text-[8px] tracking-[0.50em] text-bone-3 uppercase opacity-50">
+          <span className="font-mono text-[10px] tracking-[0.50em] text-bone-2 uppercase opacity-70">
             Manifiesto
           </span>
-          <span className="font-mono text-[8px] tracking-[0.28em] text-bone-3 uppercase opacity-35">
+          <span className="font-mono text-[10px] tracking-[0.28em] text-bone-2 uppercase opacity-60">
             Drop #1 · 2026
           </span>
         </motion.div>
@@ -516,7 +516,6 @@ export default function EditorialSection({ available }: Props) {
       <BannerExclusividad available={available} />
       <BannerSinReposicion />
       <BannerNumeradas />
-      <BannerColeccionistas />
 
       {/* Cita final */}
       <div className="border-t border-[var(--line)]">

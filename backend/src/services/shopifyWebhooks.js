@@ -4,8 +4,6 @@
  * Si ya existen, los actualiza para apuntar a la URL correcta.
  */
 
-const DOMAIN  = process.env.SHOPIFY_STORE_DOMAIN;
-const TOKEN   = process.env.SHOPIFY_ADMIN_TOKEN;
 const API_VER = '2025-01';
 
 const REQUIRED_TOPICS = [
@@ -17,6 +15,8 @@ const REQUIRED_TOPICS = [
 ];
 
 async function shopifyRest(method, path, body) {
+  const DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
+  const TOKEN  = process.env.SHOPIFY_ADMIN_TOKEN;
   const res = await fetch(`https://${DOMAIN}/admin/api/${API_VER}/${path}`, {
     method,
     headers: {
@@ -34,6 +34,8 @@ async function shopifyRest(method, path, body) {
 }
 
 export async function registerWebhooks() {
+  const DOMAIN     = process.env.SHOPIFY_STORE_DOMAIN;
+  const TOKEN      = process.env.SHOPIFY_ADMIN_TOKEN;
   const backendUrl = process.env.BACKEND_URL;
 
   if (!DOMAIN || !TOKEN) {

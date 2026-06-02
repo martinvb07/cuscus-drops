@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     await trackEvent('checkout_started', { variantId, quantity });
     return NextResponse.json({ url: checkoutUrl });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Error al crear checkout';
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error(err);
+    return NextResponse.json({ error: 'Error al crear el checkout. Inténtalo de nuevo.' }, { status: 500 });
   }
 }

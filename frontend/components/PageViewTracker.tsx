@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+const API = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export default function PageViewTracker() {
   useEffect(() => {

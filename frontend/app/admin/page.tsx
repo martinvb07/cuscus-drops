@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+const API = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 type FinancialStatus   = 'pending' | 'authorized' | 'paid' | 'partially_refunded' | 'refunded' | 'voided';
 type FulfillmentStatus = 'unfulfilled' | 'in_transit' | 'dispatched' | 'delivered' | 'cancelled';
@@ -264,7 +264,8 @@ export default function AdminPage() {
         body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        setToken(password);
+        const { token: jwt } = await res.json();
+        setToken(jwt);
         setAuthed(true);
         setLoginError(false);
       } else {

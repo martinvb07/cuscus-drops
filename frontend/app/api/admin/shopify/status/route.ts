@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getAdminOrderStats, getLiveInventory } from '@/lib/shopify-admin';
-
-function verifyAdmin(req: Request) {
-  const token = req.headers.get('x-admin-token');
-  return Boolean(token && token === process.env.ADMIN_PASSWORD);
-}
+import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: Request) {
-  if (!verifyAdmin(req)) {
+  if (!verifyAdminRequest(req)) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
   }
 
@@ -25,12 +21,10 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     connected,
-    stats:     statsVal,
-    inventory: inventoryVal,
+    stats:      statsVal,
+    inventory:  inventoryVal,
     stockTotal: Number(process.env.STOCK_TOTAL ?? 100),
-    timestamp: new Date().toISOString(),
-    error: !connected
-      ? (stats.status === 'rejected' ? String((stats as PromiseRejectedResult).reason) : 'Not configured')
-      : undefined,
+    timestamp:  new Date().toISOString(),
+    error:      !connected ? 'Error al conectar con Shopify' : undefined,
   });
 }

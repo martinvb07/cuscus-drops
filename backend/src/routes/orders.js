@@ -1,7 +1,17 @@
 import { Router }  from 'express';
+import mongoose     from 'mongoose';
 import Order        from '../models/Order.js';
 import { requireAdmin }            from '../middleware/auth.js';
 import { createShopifyFulfillment, cancelShopifyOrder } from '../services/shopifyAdmin.js';
+
+const ALLOWED_FINANCIAL   = new Set(['pending','authorized','paid','partially_refunded','refunded','voided']);
+const ALLOWED_FULFILLMENT = new Set(['unfulfilled','in_transit','dispatched','delivered','cancelled']);
+const ALLOWED_SORTS       = new Set(['-createdAt','createdAt','-shopifyCreatedAt','shopifyCreatedAt','shopifyOrderNumber','-shopifyOrderNumber']);
+const MAX_LIMIT = 100;
+
+function validObjectId(id) {
+  return mongoose.Types.ObjectId.isValid(id);
+}
 
 const router = Router();
 router.use(requireAdmin);
@@ -35,27 +45,24 @@ router.get('/stats', async (_req, res) => {
       revenue: revenue[0]?.total ?? 0,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
 // GET /api/orders  — Listar órdenes con filtros y paginación
 router.get('/', async (req, res) => {
   try {
-    const {
-      page = 1,
-      limit = 50,
-      financial,
-      fulfillment,
-      search,
-      sort = '-createdAt',
-    } = req.query;
+    const rawPage  = Math.max(1, parseInt(req.query.page,  10) || 1);
+    const rawLimit = Math.min(MAX_LIMIT, Math.max(1, parseInt(req.query.limit, 10) || 50));
+    const safeSort = ALLOWED_SORTS.has(req.query.sort) ? req.query.sort : '-createdAt';
 
     const filter = {};
-    if (financial)   filter.financialStatus  = financial;
-    if (fulfillment) filter.fulfillmentStatus = fulfillment;
-    if (search) {
-      const escaped = String(search).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Validar contra allowlist — previene NoSQL injection via ?financial[$ne]=paid
+    if (req.query.financial   && ALLOWED_FINANCIAL.has(String(req.query.financial)))   filter.financialStatus  = String(req.query.financial);
+    if (req.query.fulfillment && ALLOWED_FULFILLMENT.has(String(req.query.fulfillment))) filter.fulfillmentStatus = String(req.query.fulfillment);
+    if (req.query.search) {
+      const escaped = String(req.query.search).slice(0, 200).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const re = new RegExp(escaped, 'i');
       filter.$or = [
         { 'customer.firstName': re },
@@ -66,17 +73,18 @@ router.get('/', async (req, res) => {
       ];
     }
 
-    const skip  = (Number(page) - 1) * Number(limit);
+    const skip  = (rawPage - 1) * rawLimit;
     const total = await Order.countDocuments(filter);
     const orders = await Order.find(filter)
-      .sort(sort)
+      .sort(safeSort)
       .skip(skip)
-      .limit(Number(limit))
+      .limit(rawLimit)
       .lean();
 
-    res.json({ orders, total, page: Number(page), pages: Math.ceil(total / Number(limit)) });
+    res.json({ orders, total, page: rawPage, pages: Math.ceil(total / rawLimit) });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
@@ -122,7 +130,8 @@ router.get('/export.csv', async (_req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename="ordenes-cuscus.csv"');
     res.send('﻿' + [header, ...rows].join('\n'));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
@@ -148,25 +157,37 @@ router.get('/customers', async (_req, res) => {
     ]);
     res.json(customers);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
 // GET /api/orders/:id
 router.get('/:id', async (req, res) => {
+  if (!validObjectId(req.params.id)) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
   try {
     const order = await Order.findById(req.params.id).lean();
     if (!order) return res.status(404).json({ error: 'Orden no encontrada' });
     res.json(order);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
 // PATCH /api/orders/:id  — Actualizar estado, tracking, notas
 router.patch('/:id', async (req, res) => {
+  if (!validObjectId(req.params.id)) {
+    return res.status(400).json({ error: 'ID inválido' });
+  }
   try {
     const { fulfillmentStatus, trackingNumber, trackingCompany, trackingUrl, adminNotes } = req.body;
+
+    if (fulfillmentStatus && !ALLOWED_FULFILLMENT.has(fulfillmentStatus)) {
+      return res.status(400).json({ error: 'Estado de fulfillment inválido' });
+    }
 
     const update = {};
     if (fulfillmentStatus)  update.fulfillmentStatus = fulfillmentStatus;
@@ -200,7 +221,8 @@ router.patch('/:id', async (req, res) => {
 
     res.json(order);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 

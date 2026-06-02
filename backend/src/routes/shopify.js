@@ -8,8 +8,10 @@ const STOCK_TOTAL = Number(process.env.STOCK_TOTAL ?? 100);
 
 // Verificar firma HMAC de Shopify
 function verifyHmac(rawBody, hmacHeader) {
+  const secret = process.env.SHOPIFY_WEBHOOK_SECRET;
+  if (!secret) return false; // rechazar si no está configurado
   const hash = crypto
-    .createHmac('sha256', process.env.SHOPIFY_WEBHOOK_SECRET || '')
+    .createHmac('sha256', secret)
     .update(rawBody, 'utf8')
     .digest('base64');
   return hash === hmacHeader;

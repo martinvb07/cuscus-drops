@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -37,6 +38,8 @@ const STARS = [
 ];
 
 export default function HeroSection() {
+  const [activeSpec, setActiveSpec] = useState<number | null>(null);
+
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
 
@@ -228,27 +231,32 @@ export default function HeroSection() {
             />
           </motion.div>
 
+
           {/* Hotspot dots */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 30 }} aria-hidden>
+          <svg className="absolute inset-0 w-full h-full" style={{ zIndex: 30 }} aria-hidden>
             {HOTSPOTS.map(({ fx, fy }, i) => (
-              <motion.g key={i}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ delay: BASE + 0.55 + i * 0.22, duration: 1.8 }}
+              <g key={i}
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setActiveSpec(i)}
+                onMouseLeave={() => setActiveSpec(null)}
+                onClick={() => setActiveSpec(activeSpec === i ? null : i)}
               >
                 <motion.circle
-                  cx={`${fx}%`} cy={`${fy}%`} r={8}
-                  fill="rgba(235,230,219,0.04)"
-                  stroke="rgba(235,230,219,0.35)"
+                  cx={`${fx}%`} cy={`${fy}%`} r={activeSpec === i ? 14 : 9}
+                  fill="rgba(235,230,219,0.06)"
+                  stroke={activeSpec === i ? 'rgba(235,230,219,0.85)' : 'rgba(235,230,219,0.35)'}
                   strokeWidth="0.8"
-                  animate={{ r: [8, 13, 8], opacity: [1, 0.12, 1] }}
-                  transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: i * 1.2, repeatDelay: 0.8 }}
+                  animate={{ r: activeSpec === i ? 14 : [9, 13, 9], opacity: activeSpec === i ? 1 : [1, 0.15, 1] }}
+                  transition={{ duration: activeSpec === i ? 0.2 : 4.2, repeat: activeSpec === i ? 0 : Infinity, ease: 'easeInOut', repeatDelay: 0.8 }}
                 />
-                <circle cx={`${fx}%`} cy={`${fy}%`} r="5.5"
-                  fill="rgba(0,0,0,0.42)" stroke="rgba(0,0,0,0.48)" strokeWidth="3" />
                 <circle cx={`${fx}%`} cy={`${fy}%`} r="5"
-                  fill="rgba(235,230,219,0.06)" stroke="rgba(235,230,219,0.70)" strokeWidth="0.9" />
-                <circle cx={`${fx}%`} cy={`${fy}%`} r="2.8" fill="rgba(235,230,219,1)" />
-              </motion.g>
+                  fill="rgba(0,0,0,0.42)" stroke="rgba(0,0,0,0.48)" strokeWidth="3" />
+                <circle cx={`${fx}%`} cy={`${fy}%`} r="4.5"
+                  fill={activeSpec === i ? 'rgba(235,230,219,0.15)' : 'rgba(235,230,219,0.06)'}
+                  stroke={activeSpec === i ? 'rgba(235,230,219,1)' : 'rgba(235,230,219,0.70)'} strokeWidth="0.9" />
+                <circle cx={`${fx}%`} cy={`${fy}%`} r="2.5"
+                  fill={activeSpec === i ? 'rgba(235,230,219,1)' : 'rgba(235,230,219,0.7)'} />
+              </g>
             ))}
           </svg>
 
@@ -299,33 +307,45 @@ export default function HeroSection() {
                 initial={{ opacity: 0, x: 14 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: BASE + 0.72 + i * 0.22, duration: 1.2, ease: EASE }}
+                style={{ cursor: 'default' }}
+                onMouseEnter={() => setActiveSpec(i)}
+                onMouseLeave={() => setActiveSpec(null)}
               >
                 {/* Connector: line from border + terminal dot */}
                 <div className="flex items-center shrink-0" style={{ paddingTop: '6px' }}>
                   <div style={{
                     width: 'clamp(20px, 2.2vw, 34px)',
                     height: '1px',
-                    background: 'linear-gradient(to right, rgba(235,230,219,0.22), rgba(235,230,219,0.60))',
+                    background: activeSpec === i
+                      ? 'linear-gradient(to right, rgba(235,230,219,0.60), rgba(235,230,219,1))'
+                      : 'linear-gradient(to right, rgba(235,230,219,0.22), rgba(235,230,219,0.60))',
+                    transition: 'background 0.3s',
                     flexShrink: 0,
                   }} />
                   <div className="rounded-full shrink-0" style={{
                     width:      '4px',
                     height:     '4px',
-                    background: 'rgba(235,230,219,0.65)',
+                    background: activeSpec === i ? 'rgba(235,230,219,1)' : 'rgba(235,230,219,0.65)',
                     marginLeft: '1px',
+                    transition: 'background 0.3s',
                   }} />
                 </div>
                 {/* Content */}
-                <div style={{ paddingLeft: '12px' }}>
+                <div style={{ paddingLeft: '12px', transition: 'opacity 0.3s', opacity: activeSpec === null || activeSpec === i ? 1 : 0.3 }}>
                   <p
                     className="font-mono text-bone uppercase leading-none mb-2"
-                    style={{ fontSize: 'clamp(8px, 0.82vw, 11.5px)', letterSpacing: '0.36em', textShadow: '0 0 20px rgba(235,230,219,0.16)' }}
+                    style={{
+                      fontSize: 'clamp(8px, 0.82vw, 11.5px)',
+                      letterSpacing: '0.36em',
+                      textShadow: activeSpec === i ? '0 0 20px rgba(235,230,219,0.6)' : '0 0 20px rgba(235,230,219,0.16)',
+                      transition: 'text-shadow 0.3s',
+                    }}
                   >
                     {label}
                   </p>
                   <p
                     className="font-garamond italic text-bone-3"
-                    style={{ fontSize: 'clamp(12px, 0.92vw, 15px)', opacity: 0.65, lineHeight: 1.44 }}
+                    style={{ fontSize: 'clamp(12px, 0.92vw, 15px)', opacity: activeSpec === i ? 0.95 : 0.65, lineHeight: 1.44, transition: 'opacity 0.3s' }}
                   >
                     {detail}
                   </p>

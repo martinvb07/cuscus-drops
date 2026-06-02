@@ -113,17 +113,35 @@ export default function DropSection({ available: initialAvailable, price, curren
           {/* Divider */}
           <motion.div className="w-8 h-px bg-[var(--bone-3)] opacity-20" {...reveal(4)} />
 
-          {/* Precio */}
-          <motion.div className="flex items-baseline gap-3" {...reveal(5)}>
-            <span
-              className="font-bebas text-bone leading-none"
-              style={{ fontSize: 'clamp(42px, 7vw, 74px)', letterSpacing: '0.02em' }}
-            >
-              {price}
-            </span>
-            <span className="font-mono text-[9px] tracking-[0.30em] text-bone-3 uppercase opacity-60">
-              {currency}
-            </span>
+          {/* Precio + Entrega */}
+          <motion.div className="flex flex-col gap-1" {...reveal(5)}>
+
+            {/* Precio */}
+            <div className="flex items-baseline gap-3">
+              <span
+                className="font-bebas text-bone leading-none"
+                style={{ fontSize: 'clamp(42px, 7vw, 74px)', letterSpacing: '0.02em' }}
+              >
+                {price}
+              </span>
+              <span className="font-mono text-[9px] tracking-[0.30em] text-bone-3 uppercase opacity-60">
+                {currency}
+              </span>
+            </div>
+
+            {/* Entrega */}
+            <div className="flex items-baseline gap-3">
+              <span
+                className="font-bebas text-bone leading-none"
+                style={{ fontSize: 'clamp(28px, 4.5vw, 52px)', letterSpacing: '0.02em' }}
+              >
+                48
+              </span>
+              <span className="font-mono text-[9px] tracking-[0.30em] text-bone-3 uppercase opacity-60">
+                Días de entrega
+              </span>
+            </div>
+
           </motion.div>
 
           {/* Stock + CTA */}

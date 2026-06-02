@@ -124,7 +124,7 @@ export default function PreBuyButton({ available }: { available: number | null }
 
       {/* Terms link */}
       <p className="font-mono text-[9px] tracking-[0.22em] uppercase text-center" style={{ opacity: 0.65 }}>
-        <span className="text-bone-3">Entrega estimada 38 días &nbsp;·&nbsp; </span>
+        <span className="text-bone-3">Entrega estimada 48 días &nbsp;·&nbsp; </span>
         <button
           onClick={() => setTermsOpen(true)}
           className="text-bone-3 underline underline-offset-2 hover:opacity-70 transition-opacity duration-200"

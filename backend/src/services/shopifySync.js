@@ -6,8 +6,6 @@
 
 import Order from '../models/Order.js';
 
-const DOMAIN  = process.env.SHOPIFY_STORE_DOMAIN;
-const TOKEN   = process.env.SHOPIFY_ADMIN_TOKEN;
 const API_VER = '2025-01';
 
 function mapFinancial(status) {
@@ -80,6 +78,8 @@ function shopifyOrderToDoc(o) {
  * Devuelve { synced, total, errors }.
  */
 export async function syncOrdersFromShopify(limit = 250) {
+  const DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
+  const TOKEN  = process.env.SHOPIFY_ADMIN_TOKEN;
   if (!DOMAIN || !TOKEN) throw new Error('SHOPIFY_STORE_DOMAIN o SHOPIFY_ADMIN_TOKEN no configurados');
 
   // test=false excluye órdenes de sandbox. financial_status=paid excluye las no procesadas.

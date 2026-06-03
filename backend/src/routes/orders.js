@@ -18,10 +18,26 @@ router.use(requireAdmin);
 
 const STOCK_TOTAL = Number(process.env.STOCK_TOTAL ?? 100);
 
+async function getShopifyInventory() {
+  try {
+    const domain  = process.env.SHOPIFY_STORE_DOMAIN;
+    const token   = process.env.SHOPIFY_ADMIN_TOKEN;
+    const variant = process.env.SHOPIFY_VARIANT_ID?.split('/').pop();
+    if (!domain || !token || !variant) return null;
+    const res = await fetch(
+      `https://${domain}/admin/api/2025-01/variants/${variant}.json`,
+      { headers: { 'X-Shopify-Access-Token': token }, signal: AbortSignal.timeout(5_000) },
+    );
+    if (!res.ok) return null;
+    const { variant: v } = await res.json();
+    return v?.inventory_quantity ?? null;
+  } catch { return null; }
+}
+
 // GET /api/orders/stats  — Dashboard
 router.get('/stats', async (_req, res) => {
   try {
-    const [total, paid, authorized, dispatched, delivered, revenue] = await Promise.all([
+    const [total, paid, authorized, dispatched, delivered, revenue, shopifyAvailable] = await Promise.all([
       Order.countDocuments(),
       Order.countDocuments({ financialStatus: 'paid' }),
       Order.countDocuments({ financialStatus: 'authorized' }),
@@ -31,7 +47,10 @@ router.get('/stats', async (_req, res) => {
         { $match: { financialStatus: 'paid' } },
         { $group: { _id: null, total: { $sum: { $toDouble: '$totalPrice' } } } },
       ]),
+      getShopifyInventory(),
     ]);
+
+    const available = shopifyAvailable ?? Math.max(0, STOCK_TOTAL - paid - authorized);
 
     res.json({
       total,
@@ -40,7 +59,7 @@ router.get('/stats', async (_req, res) => {
       pending: total - paid - authorized,
       dispatched,
       delivered,
-      available: Math.max(0, STOCK_TOTAL - paid - authorized),
+      available,
       stockTotal: STOCK_TOTAL,
       revenue: revenue[0]?.total ?? 0,
     });

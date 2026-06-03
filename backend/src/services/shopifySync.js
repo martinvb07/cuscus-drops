@@ -83,7 +83,7 @@ export async function syncOrdersFromShopify(limit = 250) {
   if (!DOMAIN || !TOKEN) throw new Error('SHOPIFY_STORE_DOMAIN o SHOPIFY_ADMIN_TOKEN no configurados');
 
   // test=false excluye órdenes de sandbox. financial_status=paid excluye las no procesadas.
-  const url = `https://${DOMAIN}/admin/api/${API_VER}/orders.json?status=any&financial_status=paid&limit=${limit}&order=created_at+desc`;
+  const url = `https://${DOMAIN}/admin/api/${API_VER}/orders.json?status=any&limit=${limit}&order=created_at+desc`;
   const res = await fetch(url, {
     headers: { 'X-Shopify-Access-Token': TOKEN },
     signal:  AbortSignal.timeout(20_000),

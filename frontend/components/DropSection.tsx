@@ -139,9 +139,8 @@ export default function DropSection({ available: initialAvailable, price, curren
 
           </motion.div>
 
-          {/* Stock + CTA */}
+          {/* CTA */}
           <motion.div className="flex flex-col gap-5" {...reveal(6)}>
-            <StockBadge available={available} />
             <PreBuyButton available={available} />
           </motion.div>
 

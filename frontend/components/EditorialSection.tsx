@@ -123,35 +123,6 @@ function BannerExclusividad({ available }: Props) {
             Solo cien gorras en el mundo.<br />Cada pieza existe una sola vez.
           </motion.p>
 
-          {/* Barra de stock */}
-          <motion.div
-            className="flex flex-col gap-2.5 w-full max-w-[320px] ml-5"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.36, duration: 0.9 }}
-          >
-            <div className="relative w-full h-px bg-[var(--line)] overflow-hidden">
-              {pct !== null && (
-                <motion.div
-                  className="absolute left-0 top-0 h-full"
-                  style={{ background: 'linear-gradient(90deg, var(--bone-3), var(--bone))' }}
-                  initial={{ width: '0%' }}
-                  whileInView={{ width: `${pct}%` }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.55, duration: 1.4, ease: EASE }}
-                />
-              )}
-            </div>
-            <div className="flex justify-between">
-              <span className="font-mono text-[7.5px] tracking-[0.26em] uppercase text-bone-2">
-                {available != null ? `${available} disponibles` : '— — —'}
-              </span>
-              <span className="font-mono text-[7.5px] tracking-[0.26em] uppercase text-bone-3 opacity-45">
-                100 total
-              </span>
-            </div>
-          </motion.div>
         </div>
 
         {/* â”€â”€ Right: gorra con parallax â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
